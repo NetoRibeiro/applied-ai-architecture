@@ -1,13 +1,18 @@
 import { useEffect, useState } from 'react';
-import { BookOpen, Check, ClipboardList, Code2, FlaskConical, Search, X } from 'lucide-react';
+import type { User } from 'firebase/auth';
+import { BookOpen, Check, ClipboardList, Cloud, Code2, FlaskConical, LogIn, Search, X } from 'lucide-react';
 import { WEEKLY_STEPS, countCompletedSteps } from './LogbookView';
-import type { PhaseInfo, SearchHit, WeekLogState, WeekMeta } from '../types';
+import type { PhaseInfo, SearchHit, UserProfile, WeekLogState, WeekMeta } from '../types';
 
 interface CurriculumViewProps {
   phases: PhaseInfo[];
   weeks: WeekMeta[];
   completedWeeks: number[];
   weekLogs: Record<number, WeekLogState>;
+  user: User | null;
+  profile: UserProfile | null;
+  onSignIn: () => Promise<void>;
+  onOpenAccess: () => void;
   onToggleComplete: (week: number) => void;
   onOpenWeek: (week: number, tab?: 'concept' | 'notebook') => void;
   onOpenLab: (labId: string) => void;
@@ -54,6 +59,10 @@ export default function CurriculumView({
   weeks,
   completedWeeks,
   weekLogs,
+  user,
+  profile,
+  onSignIn,
+  onOpenAccess,
   onToggleComplete,
   onOpenWeek,
   onOpenLab,
@@ -210,6 +219,61 @@ export default function CurriculumView({
             <span className="tabular-nums">~14h / semana</span>
           </div>
         </div>
+      </section>
+
+      {/* Community Login / Personal Sync Strip */}
+      <section className="bg-white border border-slate-200 rounded-xl px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {!user ? (
+          <>
+            <div className="flex items-start sm:items-center gap-3 text-sm text-slate-700">
+              <Cloud className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5 sm:mt-0" />
+              <span>
+                <strong>Estude com sua própria conta:</strong> faça login com o Google para ter seu LogBook individual de 192 passos, horas e rascunhos ADR/RFC salvos na nuvem.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => void onSignIn()}
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium bg-[#14213D] text-white rounded-lg hover:bg-[#1E3158] transition-colors whitespace-nowrap shrink-0 cursor-pointer self-start sm:self-auto"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>Entrar com Google</span>
+            </button>
+          </>
+        ) : (
+          <>
+            <div className="flex items-start sm:items-center gap-3 text-sm text-slate-700">
+              <Cloud className="w-4 h-4 text-[#059669] shrink-0 mt-0.5 sm:mt-0" />
+              <span>
+                Conectado como <strong>{profile?.displayName || user.email}</strong>
+                {' · '}
+                {profile?.status === 'approved'
+                  ? 'Seu plano de estudos e LogBook estão sincronizados no banco de dados.'
+                  : profile?.status === 'pending'
+                    ? 'Conta aguardando liberação do administrador.'
+                    : 'Acesso restrito pelo administrador.'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 self-start sm:self-auto">
+              {profile?.status === 'approved' && (
+                <button
+                  type="button"
+                  onClick={onOpenLogbook}
+                  className="px-3.5 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-lg hover:bg-[#1E3158] whitespace-nowrap cursor-pointer"
+                >
+                  Meu LogBook
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onOpenAccess}
+                className="px-3.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg whitespace-nowrap cursor-pointer"
+              >
+                Conta &amp; Acesso
+              </button>
+            </div>
+          </>
+        )}
       </section>
 
       {/* Recommended 4-Cycle Milestones Overview */}

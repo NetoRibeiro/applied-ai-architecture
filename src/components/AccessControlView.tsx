@@ -15,9 +15,10 @@ import {
   Users,
 } from 'lucide-react';
 import {
-  ADMIN_BOOTSTRAP_EMAIL,
+  adminApproveAllPending,
   adminDeleteUser,
   adminUpdateUser,
+  isBootstrapAdminEmail,
   updateAccessPolicy,
 } from '../firebase';
 import type { RegistrationMode, UserProfile, UserRole, UserStatus } from '../types';
@@ -62,8 +63,8 @@ export default function AccessControlView({
   const [policyBusy, setPolicyBusy] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
 
-  const isAdmin = profile?.role === 'admin' || (user?.email === ADMIN_BOOTSTRAP_EMAIL && user?.emailVerified);
-  const isBootstrappedAdmin = user?.email === ADMIN_BOOTSTRAP_EMAIL && user?.emailVerified;
+  const isBootstrappedAdmin = isBootstrapAdminEmail(user?.email) && user?.emailVerified;
+  const isAdmin = profile?.role === 'admin' || isBootstrappedAdmin;
 
   const approvedCount = allUsers.filter((u) => u.status === 'approved').length;
   const pendingCount = allUsers.filter((u) => u.status === 'pending').length;
@@ -126,6 +127,20 @@ export default function AccessControlView({
       setActionFeedback(err instanceof Error ? err.message : 'Não foi possível remover o registro.');
     } finally {
       setBusyUid(null);
+    }
+  };
+
+  const handleApproveAllPending = async () => {
+    if (!user || !isAdmin || pendingCount === 0) return;
+    setPolicyBusy(true);
+    setActionFeedback(null);
+    try {
+      const count = await adminApproveAllPending(allUsers);
+      setActionFeedback(`${count} usuário(s) pendente(s) aprovado(s).`);
+    } catch (err) {
+      setActionFeedback(err instanceof Error ? err.message : 'Erro ao aprovar pendentes.');
+    } finally {
+      setPolicyBusy(false);
     }
   };
 
@@ -283,31 +298,43 @@ export default function AccessControlView({
                   Define se novos usuários que entrarem com Google recebem acesso imediato ou ficam pendentes até sua aprovação manual.
                 </p>
               </div>
-              <div className="flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg self-start shrink-0">
-                <button
-                  type="button"
-                  disabled={policyBusy}
-                  onClick={() => void handleTogglePolicy('approval_required')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
-                    registrationMode === 'approval_required'
-                      ? 'bg-white text-[#0F172A] shadow-sm'
-                      : 'text-slate-600 hover:text-[#0F172A]'
-                  }`}
-                >
-                  Aprovação Manual
-                </button>
-                <button
-                  type="button"
-                  disabled={policyBusy}
-                  onClick={() => void handleTogglePolicy('open_authenticated')}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
-                    registrationMode === 'open_authenticated'
-                      ? 'bg-white text-[#0F172A] shadow-sm'
-                      : 'text-slate-600 hover:text-[#0F172A]'
-                  }`}
-                >
-                  Auto-Aprovar Google Login
-                </button>
+              <div className="flex flex-wrap items-center gap-2 self-start shrink-0">
+                <div className="flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg">
+                  <button
+                    type="button"
+                    disabled={policyBusy}
+                    onClick={() => void handleTogglePolicy('open_authenticated')}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
+                      registrationMode === 'open_authenticated'
+                        ? 'bg-white text-[#0F172A] shadow-sm'
+                        : 'text-slate-600 hover:text-[#0F172A]'
+                    }`}
+                  >
+                    Acesso Aberto (Login Google)
+                  </button>
+                  <button
+                    type="button"
+                    disabled={policyBusy}
+                    onClick={() => void handleTogglePolicy('approval_required')}
+                    className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
+                      registrationMode === 'approval_required'
+                        ? 'bg-white text-[#0F172A] shadow-sm'
+                        : 'text-slate-600 hover:text-[#0F172A]'
+                    }`}
+                  >
+                    Aprovação Manual
+                  </button>
+                </div>
+                {pendingCount > 0 && (
+                  <button
+                    type="button"
+                    disabled={policyBusy}
+                    onClick={() => void handleApproveAllPending()}
+                    className="px-3 py-2 text-xs font-medium bg-[#059669] text-white hover:bg-emerald-700 rounded-lg whitespace-nowrap cursor-pointer disabled:opacity-50"
+                  >
+                    Aprovar Pendentes ({pendingCount})
+                  </button>
+                )}
               </div>
             </div>
 
@@ -365,7 +392,7 @@ export default function AccessControlView({
                   </thead>
                   <tbody className="divide-y divide-slate-200">
                     {allUsers.map((u) => {
-                      const isOwnerRow = u.email === ADMIN_BOOTSTRAP_EMAIL;
+                      const isOwnerRow = isBootstrapAdminEmail(u.email);
                       const isBusy = busyUid === u.uid;
                       return (
                         <tr key={u.uid} className="hover:bg-slate-50/60">

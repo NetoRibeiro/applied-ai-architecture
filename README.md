@@ -40,15 +40,23 @@ O servidor inicia na porta `3000` e oferece cinco áreas integradas:
 - **Governança:** editores Markdown com pré-visualização ao vivo baseados nos templates oficiais de ADR e RFC da Fase 7, sincronizados na nuvem.
 - **Conta & Controle de Acesso:** login via Google (Firebase Auth), persistência por usuário no Firestore e painel administrativo para aprovar, suspender ou gerenciar papéis de acesso.
 
-### Deploy via Docker na VPS
+### Deploy via Docker na VPS (e setup para forks)
 
-O repositório já inclui `Dockerfile`, `.dockerignore` e `docker-compose.yml` prontos para produção (`NODE_ENV=production`, porta `3000` e `HEALTHCHECK` em `/api/health`):
+Como `firebase-applet-config.json`, `firestore.rules` e `.env` ficam no `.gitignore` para não expor e-mail de administrador nem configurações do seu ambiente no repositório público, ao clonar/fazer fork para rodar na sua VPS ou máquina local:
 
 ```bash
-# 1. Subir o container em background na VPS
+# 1. Crie os arquivos locais a partir dos modelos
+cp .env.example .env
+cp firebase-applet-config.example.json firebase-applet-config.json
+cp firestore.rules.example firestore.rules
+
+# 2. Edite .env (VITE_ADMIN_EMAIL=seu-email), firebase-applet-config.json
+#    e substitua admin@exemplo.com em firestore.rules antes de publicar as regras no Firebase
+
+# 3. Suba o container em background na VPS
 docker compose up -d --build
 
-# 2. Acompanhar logs
+# 4. Acompanhe logs
 docker compose logs -f workbench
 ```
 

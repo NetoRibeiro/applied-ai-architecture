@@ -12,13 +12,13 @@ import LogbookView, {
   createEmptyWeekLog,
 } from './components/LogbookView';
 import {
-  ADMIN_BOOTSTRAP_EMAIL,
   OperationType,
   auth,
   createLogEntry,
   db,
   ensureUserProfile,
   handleFirestoreError,
+  isBootstrapAdminEmail,
   migrateLocalProgressToCloud,
   removeLogEntry,
   saveGovernanceDraft,
@@ -104,7 +104,7 @@ export default function App() {
   const [authLoading, setAuthLoading] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [registrationMode, setRegistrationMode] = useState<RegistrationMode>('approval_required');
+  const [registrationMode, setRegistrationMode] = useState<RegistrationMode>('open_authenticated');
   const [allUsers, setAllUsers] = useState<UserProfile[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
 
@@ -231,7 +231,7 @@ export default function App() {
   }, [user]);
 
   const isAdmin =
-    Boolean(user?.emailVerified && user.email === ADMIN_BOOTSTRAP_EMAIL) ||
+    Boolean(user?.emailVerified && isBootstrapAdminEmail(user.email)) ||
     profile?.role === 'admin';
 
   const canPersistToCloud = Boolean(
@@ -688,6 +688,10 @@ export default function App() {
                 weeks={weeks}
                 completedWeeks={completedWeeks}
                 weekLogs={weekLogs}
+                user={user}
+                profile={profile}
+                onSignIn={handleSignIn}
+                onOpenAccess={() => setView('access')}
                 onToggleComplete={toggleCompleteWeek}
                 onOpenWeek={openWeek}
                 onOpenLab={openLab}

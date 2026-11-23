@@ -28,7 +28,13 @@ import type {
   WeekLogState,
 } from './types';
 
-export const ADMIN_BOOTSTRAP_EMAIL = 'dsjuvencio@gmail.com';
+export const ADMIN_BOOTSTRAP_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL ?? '').trim().toLowerCase();
+
+export function isBootstrapAdminEmail(email?: string | null): boolean {
+  return Boolean(
+    ADMIN_BOOTSTRAP_EMAIL && email && email.trim().toLowerCase() === ADMIN_BOOTSTRAP_EMAIL,
+  );
+}
 
 const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
@@ -115,7 +121,7 @@ export function formatWeekDocId(week: number): string {
 export async function ensureUserProfile(user: User): Promise<void> {
   const userPath = `users/${user.uid}`;
   const userRef = doc(db, 'users', user.uid);
-  const isOwnerAdmin = user.email === ADMIN_BOOTSTRAP_EMAIL && user.emailVerified;
+  const isOwnerAdmin = isBootstrapAdminEmail(user.email) && user.emailVerified;
 
   let existingSnap;
   try {
@@ -131,7 +137,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
       : undefined;
 
   if (!existingSnap.exists()) {
-    let initialStatus: UserStatus = 'pending';
+    let initialStatus: UserStatus = 'approved';
     let initialRole: UserRole = 'student';
 
     if (isOwnerAdmin) {
@@ -140,8 +146,8 @@ export async function ensureUserProfile(user: User): Promise<void> {
     } else {
       try {
         const configSnap = await getDoc(doc(db, 'config', 'access'));
-        if (configSnap.exists() && configSnap.data()?.registrationMode === 'open_authenticated') {
-          initialStatus = 'approved';
+        if (configSnap.exists() && configSnap.data()?.registrationMode === 'approval_required') {
+          initialStatus = 'pending';
         }
       } catch (error) {
         handleFirestoreError(error, OperationType.GET, 'config/access');
@@ -174,7 +180,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
         const configSnap = await getDoc(configRef);
         if (!configSnap.exists()) {
           await setDoc(configRef, {
-            registrationMode: 'approval_required',
+            registrationMode: 'open_authenticated',
             updatedBy: user.uid,
             updatedAt: serverTimestamp(),
           });
@@ -207,7 +213,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
       const configSnap = await getDoc(configRef);
       if (!configSnap.exists()) {
         await setDoc(configRef, {
-          registrationMode: 'approval_required',
+          registrationMode: 'open_authenticated',
           updatedBy: user.uid,
           updatedAt: serverTimestamp(),
         });
@@ -451,6 +457,26 @@ export async function adminDeleteUser(targetUid: string): Promise<void> {
     await deleteDoc(doc(db, 'users', targetUid));
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, userPath);
+  }
+}
+
+export async function adminApproveAllPending(users: UserProfile[]): Promise<number> {
+  const pending = users.filter((u) => u.status === 'pending');
+  if (pending.length === 0) return 0;
+
+  const batch = writeBatch(db);
+  for (const u of pending) {
+    batch.update(doc(db, 'users', u.uid), {
+      status: 'approved',
+      updatedAt: serverTimestamp(),
+    });
+  }
+
+  try {
+    await batch.commit();
+    return pending.length;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, 'users');
   }
 }
 

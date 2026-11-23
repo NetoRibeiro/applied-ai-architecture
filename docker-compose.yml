@@ -3,6 +3,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        VITE_ADMIN_EMAIL: "${VITE_ADMIN_EMAIL:-}"
     container_name: applied-ai-architecture
     restart: unless-stopped
     ports:

@@ -7,6 +7,8 @@ COPY package.json ./
 RUN npm install
 
 COPY . .
+ARG VITE_ADMIN_EMAIL=""
+ENV VITE_ADMIN_EMAIL=${VITE_ADMIN_EMAIL}
 RUN npm run build
 
 FROM node:22-alpine AS runner

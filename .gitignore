@@ -221,3 +221,11 @@ __marimo__/
 
 # Saída do build do livro (book/build.py)
 book/_output/
+
+# Node.js
+node_modules/
+
+# Configuração local do Firebase (versione apenas os arquivos *.example.*)
+firebase-applet-config.json
+firestore.rules
+
