@@ -86,3 +86,26 @@ export interface LogbookEntry {
   blockers: string;
   commandSnippet?: string;
 }
+
+export type UserRole = 'admin' | 'student';
+export type UserStatus = 'pending' | 'approved' | 'revoked';
+export type RegistrationMode = 'approval_required' | 'open_authenticated';
+
+export interface UserProfile {
+  uid: string;
+  email: string;
+  displayName: string;
+  photoURL?: string;
+  role: UserRole;
+  status: UserStatus;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+  lastLoginAt?: unknown;
+}
+
+export interface AccessConfig {
+  registrationMode: RegistrationMode;
+  updatedBy: string;
+  updatedAt?: unknown;
+}
+

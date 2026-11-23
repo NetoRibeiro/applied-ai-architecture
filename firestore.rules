@@ -1,0 +1,296 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Core Primitives
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerified() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(userId) {
+      return isVerified() && request.auth.uid == userId;
+    }
+
+    function isBootstrappedAdmin() {
+      return isVerified() && request.auth.token.email == 'dsjuvencio@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() ||
+        (isVerified() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+    }
+
+    function isApprovedOwner(userId) {
+      return isOwner(userId) && (
+        isAdmin() ||
+        (exists(/databases/$(database)/documents/users/$(userId)) &&
+         get(/databases/$(database)/documents/users/$(userId)).data.status == 'approved')
+      );
+    }
+
+    // Entity Validators
+    function isValidAccessConfig(data) {
+      return data.keys().hasAll(['registrationMode', 'updatedBy', 'updatedAt']) &&
+        data.keys().hasOnly(['registrationMode', 'updatedBy', 'updatedAt']) &&
+        data.registrationMode in ['approval_required', 'open_authenticated'] &&
+        data.updatedBy is string && data.updatedBy == request.auth.uid && data.updatedBy.size() <= 128 &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidAdminRecord(data, adminId) {
+      return data.keys().hasAll(['uid', 'email', 'grantedBy', 'createdAt']) &&
+        data.keys().hasOnly(['uid', 'email', 'grantedBy', 'createdAt']) &&
+        data.uid is string && data.uid == adminId && isValidId(data.uid) &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 200 &&
+        data.grantedBy is string && data.grantedBy == request.auth.uid && data.grantedBy.size() <= 128 &&
+        data.createdAt is timestamp;
+    }
+
+    function isValidUserProfile(data, userId) {
+      return data.keys().hasAll([
+          'uid', 'email', 'displayName', 'role', 'status', 'createdAt', 'updatedAt', 'lastLoginAt'
+        ]) &&
+        data.keys().hasOnly([
+          'uid', 'email', 'displayName', 'photoURL', 'role', 'status', 'createdAt', 'updatedAt', 'lastLoginAt'
+        ]) &&
+        data.uid is string && data.uid == userId && isValidId(data.uid) &&
+        data.email is string && data.email.size() > 0 && data.email.size() <= 200 &&
+        data.displayName is string && data.displayName.size() > 0 && data.displayName.size() <= 120 &&
+        (!('photoURL' in data) || (data.photoURL is string && data.photoURL.size() <= 500)) &&
+        data.role in ['admin', 'student'] &&
+        data.status in ['pending', 'approved', 'revoked'] &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp &&
+        data.lastLoginAt is timestamp;
+    }
+
+    function isValidWeekSteps(steps) {
+      return steps is map &&
+        steps.keys().hasAll(['reading', 'self_check', 'exercise', 'gabarito', 'deliverable', 'commit']) &&
+        steps.keys().hasOnly(['reading', 'self_check', 'exercise', 'gabarito', 'deliverable', 'commit']) &&
+        steps.reading is bool &&
+        steps.self_check is bool &&
+        steps.exercise is bool &&
+        steps.gabarito is bool &&
+        steps.deliverable is bool &&
+        steps.commit is bool;
+    }
+
+    function isValidWeekLog(data, userId) {
+      return data.keys().hasAll([
+          'ownerUid', 'week', 'steps', 'hoursSpent', 'lastUpdated',
+          'deliverableSummary', 'notes', 'blockers', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerUid', 'week', 'steps', 'hoursSpent', 'lastUpdated',
+          'deliverableSummary', 'notes', 'blockers', 'createdAt', 'updatedAt'
+        ]) &&
+        data.ownerUid is string && data.ownerUid == userId && data.ownerUid == request.auth.uid &&
+        data.week is int && data.week >= 1 && data.week <= 32 &&
+        isValidWeekSteps(data.steps) &&
+        data.hoursSpent is number && data.hoursSpent >= 0 && data.hoursSpent <= 500 &&
+        data.lastUpdated is string && data.lastUpdated.size() <= 32 &&
+        data.deliverableSummary is string && data.deliverableSummary.size() <= 1000 &&
+        data.notes is string && data.notes.size() <= 10000 &&
+        data.blockers is string && data.blockers.size() <= 5000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidLogEntry(data, userId) {
+      return data.keys().hasAll([
+          'ownerUid', 'date', 'week', 'title', 'hours', 'notes', 'blockers', 'createdAt', 'updatedAt'
+        ]) &&
+        data.keys().hasOnly([
+          'ownerUid', 'date', 'week', 'title', 'hours', 'notes', 'blockers', 'commandSnippet', 'createdAt', 'updatedAt'
+        ]) &&
+        data.ownerUid is string && data.ownerUid == userId && data.ownerUid == request.auth.uid &&
+        data.date is string && data.date.size() >= 8 && data.date.size() <= 32 &&
+        data.week is int && data.week >= 1 && data.week <= 32 &&
+        data.title is string && data.title.size() > 0 && data.title.size() <= 200 &&
+        data.hours is number && data.hours >= 0 && data.hours <= 100 &&
+        data.notes is string && data.notes.size() > 0 && data.notes.size() <= 10000 &&
+        data.blockers is string && data.blockers.size() <= 3000 &&
+        (!('commandSnippet' in data) || (data.commandSnippet is string && data.commandSnippet.size() <= 4000)) &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    function isValidGovernanceDraft(data, userId) {
+      return data.keys().hasAll(['ownerUid', 'kind', 'content', 'createdAt', 'updatedAt']) &&
+        data.keys().hasOnly(['ownerUid', 'kind', 'content', 'createdAt', 'updatedAt']) &&
+        data.ownerUid is string && data.ownerUid == userId && data.ownerUid == request.auth.uid &&
+        data.kind in ['adr', 'rfc'] &&
+        data.content is string && data.content.size() <= 50000 &&
+        data.createdAt is timestamp &&
+        data.updatedAt is timestamp;
+    }
+
+    // Health check probe
+    match /test/{testId} {
+      allow get: if isValidId(testId) && testId == 'connection';
+      allow list, write: if false;
+    }
+
+    // Access control policy
+    match /config/{configId} {
+      allow get: if isValidId(configId) && configId == 'access' && isVerified();
+      allow list: if false;
+      allow create: if isValidId(configId) && configId == 'access' &&
+        isAdmin() &&
+        isValidAccessConfig(incoming()) &&
+        incoming().updatedAt == request.time;
+      allow update: if isValidId(configId) && configId == 'access' &&
+        isAdmin() &&
+        isValidAccessConfig(incoming()) &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['registrationMode', 'updatedBy', 'updatedAt']) &&
+        incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Explicit Admin markers
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId) && (isOwner(adminId) || isAdmin());
+      allow list: if isBootstrappedAdmin();
+      allow create: if isValidId(adminId) &&
+        isBootstrappedAdmin() &&
+        isValidAdminRecord(incoming(), adminId) &&
+        incoming().createdAt == request.time;
+      allow update: if false;
+      allow delete: if isValidId(adminId) && isBootstrappedAdmin() && adminId != request.auth.uid;
+    }
+
+    // User Profiles & Controlled Access
+    match /users/{userId} {
+      allow get: if isValidId(userId) && (isOwner(userId) || isAdmin());
+      allow list: if isBootstrappedAdmin() || (isVerified() && exists(/databases/$(database)/documents/admins/$(request.auth.uid)));
+      allow create: if isValidId(userId) &&
+        isOwner(userId) &&
+        isValidUserProfile(incoming(), userId) &&
+        incoming().email == request.auth.token.email &&
+        incoming().createdAt == request.time &&
+        incoming().updatedAt == request.time &&
+        incoming().lastLoginAt == request.time &&
+        (
+          (isBootstrappedAdmin() && incoming().role == 'admin' && incoming().status == 'approved') ||
+          (
+            incoming().role == 'student' &&
+            (
+              incoming().status == 'pending' ||
+              (
+                incoming().status == 'approved' &&
+                exists(/databases/$(database)/documents/config/access) &&
+                get(/databases/$(database)/documents/config/access).data.registrationMode == 'open_authenticated'
+              )
+            )
+          )
+        );
+      allow update: if isValidId(userId) &&
+        isVerified() &&
+        isValidUserProfile(incoming(), userId) &&
+        incoming().uid == existing().uid &&
+        incoming().email == existing().email &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().updatedAt == request.time &&
+        (
+          (
+            isAdmin() &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['role', 'status', 'updatedAt']) &&
+            (existing().email != 'dsjuvencio@gmail.com' || (incoming().role == 'admin' && incoming().status == 'approved'))
+          ) ||
+          (
+            isOwner(userId) &&
+            incoming().role == existing().role &&
+            incoming().status == existing().status &&
+            incoming().lastLoginAt == request.time &&
+            incoming().diff(existing()).affectedKeys().hasOnly(['displayName', 'photoURL', 'lastLoginAt', 'updatedAt'])
+          )
+        );
+      allow delete: if isValidId(userId) && isAdmin() && userId != request.auth.uid && existing().email != 'dsjuvencio@gmail.com';
+
+      // Subcollection: Weekly 6-step logs
+      match /weekLogs/{weekId} {
+        allow get: if isValidId(userId) && isValidId(weekId) && isApprovedOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && resource.data.ownerUid == request.auth.uid;
+        allow create: if isValidId(userId) && isValidId(weekId) &&
+          isApprovedOwner(userId) &&
+          isValidWeekLog(incoming(), userId) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
+        allow update: if isValidId(userId) && isValidId(weekId) &&
+          isApprovedOwner(userId) &&
+          isValidWeekLog(incoming(), userId) &&
+          incoming().ownerUid == existing().ownerUid &&
+          incoming().week == existing().week &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'steps', 'hoursSpent', 'lastUpdated', 'deliverableSummary', 'notes', 'blockers', 'updatedAt'
+          ]);
+        allow delete: if isValidId(userId) && isValidId(weekId) && isApprovedOwner(userId);
+      }
+
+      // Subcollection: Chronological journal entries
+      match /logEntries/{entryId} {
+        allow get: if isValidId(userId) && isValidId(entryId) && isApprovedOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && resource.data.ownerUid == request.auth.uid;
+        allow create: if isValidId(userId) && isValidId(entryId) &&
+          isApprovedOwner(userId) &&
+          isValidLogEntry(incoming(), userId) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
+        allow update: if isValidId(userId) && isValidId(entryId) &&
+          isApprovedOwner(userId) &&
+          isValidLogEntry(incoming(), userId) &&
+          incoming().ownerUid == existing().ownerUid &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'date', 'week', 'title', 'hours', 'notes', 'blockers', 'commandSnippet', 'updatedAt'
+          ]);
+        allow delete: if isValidId(userId) && isValidId(entryId) && isApprovedOwner(userId);
+      }
+
+      // Subcollection: Governance ADR/RFC drafts
+      match /drafts/{draftId} {
+        allow get: if isValidId(userId) && isValidId(draftId) && isApprovedOwner(userId);
+        allow list: if isValidId(userId) && isOwner(userId) && resource.data.ownerUid == request.auth.uid;
+        allow create: if isValidId(userId) && isValidId(draftId) &&
+          isApprovedOwner(userId) &&
+          isValidGovernanceDraft(incoming(), userId) &&
+          incoming().createdAt == request.time &&
+          incoming().updatedAt == request.time;
+        allow update: if isValidId(userId) && isValidId(draftId) &&
+          isApprovedOwner(userId) &&
+          isValidGovernanceDraft(incoming(), userId) &&
+          incoming().ownerUid == existing().ownerUid &&
+          incoming().kind == existing().kind &&
+          incoming().createdAt == existing().createdAt &&
+          incoming().updatedAt == request.time &&
+          incoming().diff(existing()).affectedKeys().hasOnly(['content', 'updatedAt']);
+        allow delete: if isValidId(userId) && isValidId(draftId) && isApprovedOwner(userId);
+      }
+    }
+  }
+}

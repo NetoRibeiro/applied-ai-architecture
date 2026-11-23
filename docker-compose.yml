@@ -1,0 +1,12 @@
+services:
+  workbench:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: applied-ai-architecture
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000

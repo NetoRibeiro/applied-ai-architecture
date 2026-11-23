@@ -200,6 +200,10 @@ async function startServer() {
   const app = express();
   app.use(express.json());
 
+  app.get('/api/health', (_req, res) => {
+    res.json({ ok: true });
+  });
+
   app.get('/api/curriculum', (_req, res) => {
     res.json({
       phases: PHASES,
@@ -324,7 +328,11 @@ async function startServer() {
   } else {
     const distDir = path.join(ROOT_DIR, 'dist');
     app.use(express.static(distDir));
-    app.get('*', (_req, res) => {
+    app.use((req, res, next) => {
+      if (req.method !== 'GET' || req.path.startsWith('/api/')) {
+        next();
+        return;
+      }
       res.sendFile(path.join(distDir, 'index.html'));
     });
   }

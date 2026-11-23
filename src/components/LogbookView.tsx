@@ -1,16 +1,21 @@
 import { useState } from 'react';
+import type { User } from 'firebase/auth';
 import {
   BookOpen,
   Check,
   ChevronDown,
   ChevronUp,
+  Cloud,
   Code2,
   Copy,
   Download,
+  Lock,
+  LogIn,
   Plus,
   Trash2,
+  UploadCloud,
 } from 'lucide-react';
-import type { LogbookEntry, WeekLogState, WeekMeta, WeeklyStepId } from '../types';
+import type { LogbookEntry, UserProfile, WeekLogState, WeekMeta, WeeklyStepId } from '../types';
 
 export const WEEKLY_STEPS: Array<{ id: WeeklyStepId; shortLabel: string; fullLabel: string }> = [
   { id: 'reading', shortLabel: 'Leitura', fullLabel: '1. Leitura de conceito (sem código)' },
@@ -56,6 +61,14 @@ interface LogbookViewProps {
   weeks: WeekMeta[];
   weekLogs: Record<number, WeekLogState>;
   logEntries: LogbookEntry[];
+  user: User | null;
+  profile: UserProfile | null;
+  canPersistToCloud: boolean;
+  hasLocalMigration: boolean;
+  migrating: boolean;
+  onMigrateLocal: () => Promise<void>;
+  onSignIn: () => Promise<void>;
+  onOpenAccess: () => void;
   onToggleStep: (week: number, step: WeeklyStepId) => void;
   onUpdateWeekLog: (week: number, patch: Partial<WeekLogState>) => void;
   onAddLogEntry: (entry: Omit<LogbookEntry, 'id'>) => void;
@@ -69,6 +82,14 @@ export default function LogbookView({
   weeks,
   weekLogs,
   logEntries,
+  user,
+  profile,
+  canPersistToCloud,
+  hasLocalMigration,
+  migrating,
+  onMigrateLocal,
+  onSignIn,
+  onOpenAccess,
   onToggleStep,
   onUpdateWeekLog,
   onAddLogEntry,
@@ -88,6 +109,63 @@ export default function LogbookView({
   const [entryNotes, setEntryNotes] = useState('');
   const [entryBlockers, setEntryBlockers] = useState('');
   const [entryCommand, setEntryCommand] = useState('');
+
+  if (!canPersistToCloud) {
+    return (
+      <div className="mx-auto max-w-[900px] px-6 py-12 space-y-6">
+        <div className="bg-white border border-slate-200 rounded-xl p-8 space-y-5">
+          <div className="flex items-center gap-3 text-[#14213D]">
+            <Lock className="w-5 h-5" />
+            <h1 className="text-xl font-bold tracking-tight">
+              LogBook com Acesso Controlado
+            </h1>
+          </div>
+
+          {!user ? (
+            <>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                O material didático e os labs interativos são abertos. Para registrar seus 192 passos, horas de estudo e histórico cronológico no banco de dados Firestore, faça login com sua conta Google.
+              </p>
+              <button
+                type="button"
+                onClick={() => void onSignIn()}
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-medium bg-[#14213D] text-white rounded-lg hover:bg-[#1E3158] cursor-pointer"
+              >
+                <LogIn className="w-4 h-4" />
+                <span>Entrar com Google</span>
+              </button>
+            </>
+          ) : profile?.status === 'pending' ? (
+            <>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Sua conta <strong>{user.email}</strong> está aguardando aprovação do administrador para gravação no banco de dados. Assim que aprovada, seu LogBook será liberado automaticamente.
+              </p>
+              <button
+                type="button"
+                onClick={onOpenAccess}
+                className="px-4 py-2 text-xs font-medium bg-[#14213D] text-white rounded-lg hover:bg-[#1E3158] cursor-pointer"
+              >
+                Ver Status da Conta
+              </button>
+            </>
+          ) : (
+            <>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                O acesso ao banco de dados para <strong>{user.email}</strong> está suspenso ou ainda carregando permissões.
+              </p>
+              <button
+                type="button"
+                onClick={onOpenAccess}
+                className="px-4 py-2 text-xs font-medium bg-[#14213D] text-white rounded-lg hover:bg-[#1E3158] cursor-pointer"
+              >
+                Gerenciar Conta &amp; Acesso
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   const totalSteps = weeks.length * WEEKLY_STEPS.length;
   const completedStepsCount = weeks.reduce(
@@ -259,6 +337,28 @@ export default function LogbookView({
             <span>Baixar LOGBOOK.md</span>
           </button>
         </div>
+      </div>
+
+      <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+        <div className="flex items-center gap-2">
+          <Cloud className="w-4 h-4 text-[#0284C7] shrink-0" />
+          <span>
+            Sincronizado em tempo real na conta <strong>{user?.email}</strong> (Firestore)
+          </span>
+        </div>
+        {hasLocalMigration && (
+          <button
+            type="button"
+            disabled={migrating}
+            onClick={() => void onMigrateLocal()}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] cursor-pointer disabled:opacity-50 self-start sm:self-auto"
+          >
+            <UploadCloud className="w-3.5 h-3.5" />
+            <span>
+              {migrating ? 'Importando...' : 'Importar progresso local do navegador'}
+            </span>
+          </button>
+        )}
       </div>
 
       {/* KPI Strip */}
@@ -659,7 +759,7 @@ export default function LogbookView({
                 Histórico Cronológico ({logEntries.length})
               </h2>
               <span className="text-xs text-slate-500 tabular-nums">
-                Salvo localmente no navegador
+                Sincronizado no banco Firestore
               </span>
             </div>
 

@@ -1,0 +1,268 @@
+{
+  "entities": {
+    "ConnectionTest": {
+      "title": "ConnectionTest",
+      "description": "Read-only health probe document for validating Firestore connectivity on startup.",
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean",
+          "description": "Probe status flag."
+        }
+      },
+      "required": ["ok"]
+    },
+    "AccessConfig": {
+      "title": "AccessConfig",
+      "description": "Global access control policy managed by administrators.",
+      "type": "object",
+      "properties": {
+        "registrationMode": {
+          "type": "string",
+          "enum": ["approval_required", "open_authenticated"],
+          "description": "Whether new authenticated users require admin approval or are auto-approved."
+        },
+        "updatedBy": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "UID of the admin who last updated the access policy."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last policy change."
+        }
+      },
+      "required": ["registrationMode", "updatedBy", "updatedAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Marker document granting administrative privileges to a verified user.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "grantedBy": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "grantedBy", "createdAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user account profile and access control status.",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "displayName": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "photoURL": {
+          "type": "string",
+          "maxLength": 500
+        },
+        "role": {
+          "type": "string",
+          "enum": ["admin", "student"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "approved", "revoked"]
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastLoginAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "displayName", "role", "status", "createdAt", "updatedAt", "lastLoginAt"]
+    },
+    "WeekLog": {
+      "title": "WeekLog",
+      "description": "Per-week 6-step completion state, hours, deliverables, and study notes for an approved user.",
+      "type": "object",
+      "properties": {
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "week": {
+          "type": "integer"
+        },
+        "steps": {
+          "type": "object",
+          "description": "Boolean flags for reading, self_check, exercise, gabarito, deliverable, commit."
+        },
+        "hoursSpent": {
+          "type": "number"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "deliverableSummary": {
+          "type": "string",
+          "maxLength": 1000
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "blockers": {
+          "type": "string",
+          "maxLength": 5000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "ownerUid",
+        "week",
+        "steps",
+        "hoursSpent",
+        "lastUpdated",
+        "deliverableSummary",
+        "notes",
+        "blockers",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "LogEntry": {
+      "title": "LogEntry",
+      "description": "Chronological study journal entry with hours, summary, blockers, and command snippets.",
+      "type": "object",
+      "properties": {
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "date": {
+          "type": "string",
+          "maxLength": 32
+        },
+        "week": {
+          "type": "integer"
+        },
+        "title": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "hours": {
+          "type": "number"
+        },
+        "notes": {
+          "type": "string",
+          "maxLength": 10000
+        },
+        "blockers": {
+          "type": "string",
+          "maxLength": 3000
+        },
+        "commandSnippet": {
+          "type": "string",
+          "maxLength": 4000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ownerUid", "date", "week", "title", "hours", "notes", "blockers", "createdAt", "updatedAt"]
+    },
+    "GovernanceDraft": {
+      "title": "GovernanceDraft",
+      "description": "Saved ADR or RFC markdown draft belonging to an approved user.",
+      "type": "object",
+      "properties": {
+        "ownerUid": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "kind": {
+          "type": "string",
+          "enum": ["adr", "rfc"]
+        },
+        "content": {
+          "type": "string",
+          "maxLength": 50000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["ownerUid", "kind", "content", "createdAt", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/test/{testId}": {
+      "schema": { "$ref": "#/entities/ConnectionTest" },
+      "description": "Health check probe document."
+    },
+    "/config/{configId}": {
+      "schema": { "$ref": "#/entities/AccessConfig" },
+      "description": "Global access control policy settings."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Explicit administrator privilege markers."
+    },
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/UserProfile" },
+      "description": "Authenticated user profiles with RBAC role and access status."
+    },
+    "/users/{userId}/weekLogs/{weekId}": {
+      "schema": { "$ref": "#/entities/WeekLog" },
+      "description": "Per-week 6-step LogBook state for an approved user."
+    },
+    "/users/{userId}/logEntries/{entryId}": {
+      "schema": { "$ref": "#/entities/LogEntry" },
+      "description": "Chronological study journal sessions for an approved user."
+    },
+    "/users/{userId}/drafts/{draftId}": {
+      "schema": { "$ref": "#/entities/GovernanceDraft" },
+      "description": "Persisted ADR/RFC drafts for an approved user."
+    }
+  }
+}

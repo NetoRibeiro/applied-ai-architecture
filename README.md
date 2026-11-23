@@ -37,7 +37,22 @@ O servidor inicia na porta `3000` e oferece cinco áreas integradas:
 - **Leitura & Notebooks:** leitor editorial dos `Semana-NN-Conceitos.md` com comparador célula a célula (`# [SEU CÓDIGO AQUI]` vs. gabarito) e links diretos para o Colab.
 - **Labs Interativos:** 5 simuladores no navegador replicando a matemática dos notebooks (Threshold & Custo, Vetores & Cosine Similarity, Gradient Descent, Recall@K/MRR/NDCG e LLM Serving/KV-Cache).
 - **LogBook:** controle dos **6 passos semanais** em todas as 32 semanas (192 passos), registro de horas, entregáveis, travamentos, diário cronológico de comandos e exportação direta para `LOGBOOK.md` e checklist.
-- **Governança:** editores Markdown com pré-visualização ao vivo baseados nos templates oficiais de ADR e RFC da Fase 7.
+- **Governança:** editores Markdown com pré-visualização ao vivo baseados nos templates oficiais de ADR e RFC da Fase 7, sincronizados na nuvem.
+- **Conta & Controle de Acesso:** login via Google (Firebase Auth), persistência por usuário no Firestore e painel administrativo para aprovar, suspender ou gerenciar papéis de acesso.
+
+### Deploy via Docker na VPS
+
+O repositório já inclui `Dockerfile`, `.dockerignore` e `docker-compose.yml` prontos para produção (`NODE_ENV=production`, porta `3000` e `HEALTHCHECK` em `/api/health`):
+
+```bash
+# 1. Subir o container em background na VPS
+docker compose up -d --build
+
+# 2. Acompanhar logs
+docker compose logs -f workbench
+```
+
+> **Importante para Login Google na VPS:** ao publicar em um domínio ou IP próprio (por exemplo, via Nginx/Caddy/Traefik com HTTPS), adicione o domínio da sua VPS em **Firebase Console → Authentication → Settings → Authorized domains** para que o popup de login Google funcione normalmente.
 
 ## Para quem é
 
