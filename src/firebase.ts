@@ -213,6 +213,11 @@ export function formatAuthError(error: unknown): string {
       : '';
   const message = error instanceof Error ? error.message : String(error);
 
+  if (code === 'auth/invalid-continue-uri' || message.includes('auth/invalid-continue-uri')) {
+    const origin = typeof window !== 'undefined' ? window.location.origin : host;
+    const configuredAuthDomain = app?.options?.authDomain ?? '';
+    return `URL de retorno inválida para o Firebase (${origin}). Verifique: (1) acesse por HTTPS com domínio (evite http://IP), (2) adicione "${host}" em Firebase Console → Authentication → Settings → Authorized domains e (3) confirme FIREBASE_AUTH_DOMAIN="${configuredAuthDomain}" sem "https://" ou aspas.`;
+  }
   if (code === 'auth/unauthorized-domain' || message.includes('auth/unauthorized-domain')) {
     return `Domínio não autorizado no Firebase (${host}). Adicione "${host}" em Firebase Console → Authentication → Settings → Authorized domains.`;
   }
