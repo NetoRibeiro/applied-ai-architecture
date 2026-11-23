@@ -1,0 +1,12 @@
+/* Estilo do EPUB: leve, para respeitar as preferências do leitor. */
+body { line-height: 1.5; }
+h1 { font-weight: normal; border-bottom: 2px solid #fca311; padding-bottom: .3em; }
+h2, h3 { color: #14213d; }
+blockquote { margin: 1em 0; padding: .5em .8em; background: #f4f6fa;
+             border-left: 3px solid #3d5a80; }
+blockquote p { margin: 0; }
+code { font-family: monospace; font-size: .9em; }
+pre { white-space: pre-wrap; word-wrap: break-word; font-size: .8em;
+      background: #f7f6f2; padding: .5em; border-left: 3px solid #d9d4c5; }
+table { border-collapse: collapse; font-size: .9em; }
+th, td { border-bottom: 1px solid #ccc; padding: .25em .4em; text-align: left; vertical-align: top; }

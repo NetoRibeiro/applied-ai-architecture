@@ -1,0 +1,215 @@
+# Guia de Execução (Rascunho Revisado): Fase 1 - Fundamentos Matemáticos e Machine Learning Core
+
+> **Nota:** Este arquivo é o guia de rascunho inicial revisado com correções conceituais. O cronograma completo e autoritativo das 32 semanas está em [`PLANO_DE_ESTUDO.md`](PLANO_DE_ESTUDO.md).
+
+**Objetivo da Fase:** Elevar a sólida base de Ciência/Análise de Dados para o nível de Arquitetura de IA Corporativa. A transição real aqui é sair do ecossistema de Machine Learning clássico (dados tabulares, modelos preditivos padrão) para dominar a matemática de Deep Learning (dados não-estruturados, tensores, embeddings e mecanismos de atenção). Construir a ponte técnica para diagnosticar modelos complexos de RAG e Fine-Tuning corporativo no futuro.
+
+**Rotina Semanal:**
+*   **Fim de Semana (Sábado e Domingo):** Laptop. Foco 100% em absorção teórica e intuição visual. Nenhuma linha de código.
+*   **Dias Úteis (Segunda a Sexta):** Google Colab (CPU ou GPU T4 gratuita). Foco 100% em engenharia. Traduzir a intuição em código vetorizado e documentar no GitHub no fim do dia.
+
+---
+
+## Semana 1: Scikit-Learn & Orquestração (Refresh Estratégico)
+
+**Tema:** Calibrar o conhecimento existente em métricas e pipelines estruturados, mapeando-os diretamente para os desafios de avaliação de LLMs (ex: como Precision/Recall se traduz na avaliação de alucinações em sistemas RAG).
+
+### Sábado e Domingo: Teoria das Métricas (Visão de Arquiteto)
+*   **Tópico 1: Transformação de Dados.** Revisar `One-Hot Encoding`, `Label Encoding`, `StandardScaler` e `MinMaxScaler`. O foco mental aqui é lembrar *por que* modelos matemáticos (incluindo redes neurais no futuro) falham sem dados padronizados.
+*   **Tópico 2: A Mentira da Acurácia.** Reforçar os perigos de medir apenas a "Acurácia" em datasets desbalanceados.
+*   **Tópico 3: O Santo Graal das Métricas.** Revisão profunda da **Matriz de Confusão**. Internalizar Falsos Positivos e Falsos Negativos sob a ótica corporativa definindo sempre qual é a classe positiva (`y = 1`): *em um detector de alucinações (`y = 1` = alucinação), um Falso Negativo significa deixar uma alucinação grave chegar ao cliente; em um verificador de citações (`y = 1` = citação sustentada), um Falso Positivo é aprovar uma citação inventada*. Revisar **Precisão**, **Recall**, **F1-Score** e **Precision-Recall curve**.
+
+### Segunda a Sexta: Prática no Colab (2h / dia)
+*   **Passo 1:** No Colab, gere um dataset sintético desbalanceado com `make_classification(..., weights=[0.995])` (ou use *Credit Card Fraud Detection* com 0,17% de fraudes; evite datasets de regressão como *California Housing* ou balanceados para este exercício).
+*   **Passo 2:** Crie um objeto `Pipeline` do Scikit-Learn que execute o escalonamento dos dados sem data leakage (somente após o `train_test_split`).
+*   **Passo 3:** Adicione um modelo de classificação (ex: `RandomForestClassifier` ou `LogisticRegression`).
+*   **Passo 4:** Divida os dados com `stratify=y`, treine o pipeline completo e gere probabilidades (`predict_proba`) e previsões variando o threshold.
+*   **Passo 5 (Crucial):** Utilize `classification_report`, `confusion_matrix` e matriz de custo (`FP * custo_fp + FN * custo_fn`). Redija um breve parágrafo (salvo na pasta `/docs/`) justificando o threshold escolhido pelo impacto financeiro.
+
+---
+
+## Semana 2: A Geometria dos Dados (Álgebra Linear)
+
+**Tema:** A matemática pura por trás da similaridade semântica, embeddings e buscas vetoriais (o núcleo dos sistemas RAG corporativos).
+
+### Sábado e Domingo: Intuição Visual (3Blue1Brown)
+*   **Ação:** Assistir aos vídeos essenciais da playlist *Essence of Linear Algebra* do canal 3Blue1Brown no YouTube.
+*   **Foco Principal:** Entender o que acontece geometricamente quando você multiplica matrizes.
+*   **Conceito Chave:** Dominar visualmente o **Produto Escalar (Dot Product)** e a **Similaridade de Cosseno (Cosine Similarity)**. Internalize que a Cosine Similarity mede a similaridade de direção (sentido) independente do tamanho do vetor — e que o Dot Product coincide com ela quando os embeddings possuem norma L2 = 1.
+
+### Segunda a Sexta: Prática no Colab (2h / dia)
+*   **Passo 1:** Esqueça o Pandas e o Scikit-Learn. Trabalhe puramente com matrizes em `numpy`.
+*   **Passo 2:** Crie Arrays do Numpy representando pequenos vetores de características.
+*   **Passo 3:** Programe, do zero, uma função que calcula a Similaridade de Cosseno entre dois vetores baseada na fórmula do Produto Escalar.
+*   **Passo 4:** Crie uma "mini-base de dados vetorial" em Numpy e escreva um loop que encontre qual vetor é o mais similar à sua consulta. Esta é a engenharia reversa de um Vector DB.
+
+---
+
+## Semana 3: O Motor do Aprendizado (Cálculo)
+
+**Tema:** Como o fine-tuning de um LLM open-source realmente funciona por debaixo dos panos (Backpropagation e Gradient Descent).
+
+### Sábado e Domingo: Intuição Visual (3Blue1Brown)
+*   **Ação:** Assistir aos vídeos chave das playlists *Essence of Calculus* e *Neural Networks* do 3Blue1Brown.
+*   **Foco Principal:** Entender a **Derivada** como o vetor que aponta a "direção" para reduzir a taxa de erro do modelo.
+*   **Conceitos Chave:** Compreender a **Descida do Gradiente (Gradient Descent)** e a **Regra da Cadeia (Chain Rule)**. Saber isso será fundamental para quando formos configurar hiperparâmetros (Learning Rate) no fine-tuning corporativo (PEFT/LoRA).
+
+### Segunda a Sexta: Prática no Colab (2h / dia)
+*   **Passo 1:** Usando `numpy`, crie dados fictícios (ex: uma linha reta com ruído `y = 2x + 1`).
+*   **Passo 2:** Inicialize dois parâmetros de peso aleatórios.
+*   **Passo 3:** Crie o loop de treinamento manual (Epochs).
+*   **Passo 4:** Em cada iteração, calcule a previsão, o Erro Quadrático Médio (MSE), o Gradiente manual, e atualize os pesos multiplicando pela Taxa de Aprendizado.
+*   **Passo 5:** Registre a queda do erro (Loss) a cada epoch. Você programou a base de uma rede neural do absoluto zero.
+
+---
+
+## Semana 4: A Ponte para Tensores (PyTorch)
+
+**Tema:** O salto final. Sair da computação linear estruturada em CPU (Numpy/Pandas) para tensores de alta dimensionalidade acelerados por GPU.
+
+### Sábado e Domingo: Compreensão de Arquitetura
+*   **Ação:** Leitura focada na documentação oficial do PyTorch (`torch.Tensor` e `torch.autograd`).
+*   **Foco Principal:** Entender a diferença arquitetural entre Numpy Arrays e PyTorch Tensors.
+*   **Conceito Chave:** Entender o `Autograd` – o motor interno do PyTorch que calcula automaticamente todas as derivadas complexas que você fez à mão na Semana 3.
+
+### Segunda a Sexta: Prática no Colab (2h / dia)
+*   **Passo 1:** No Google Colab, ative o Runtime de GPU (T4 gratuita).
+*   **Passo 2:** Crie tensores de dados no PyTorch e aprenda a movê-los da memória RAM (CPU) para a memória de vídeo (`.to('cuda')`).
+*   **Passo 3:** Recrie o pipeline simples de treinamento da Semana 3 utilizando `torch.nn.Linear` e o otimizador nativo do PyTorch (`torch.optim`).
+*   **Passo 4:** Avalie a performance e a simplicidade.
+*   **Fechamento:** Commit final da Fase 1 no repositório público do GitHub.
+
+
+# Semana 1: A Ponte entre ML Clássico e Arquitetura de IA
+
+**Objetivo:** Revisar conceitos fundamentais de Machine Learning sob a ótica da Engenharia de IA Corporativa (Deep Learning e LLMs).
+
+---
+
+## Tópico 1: Transformação de Dados (O que a Rede Neural enxerga)
+
+Embora o tratamento de dados estruturados já seja rotina na Análise de Dados, no Deep Learning isso dita se os gradientes matemáticos do modelo vão convergir ou quebrar.
+
+### Variáveis Categóricas (One-Hot vs. Label)
+*   **O viés da ordem:** Usar *Label Encoding* (0=Maçã, 1=Banana, 2=Laranja) faz modelos lineares e redes neurais assumirem que Laranja (2) tem peso/ordem maior que Maçã (0). Em árvores de decisão não há multiplicação por peso, mas categorias com alta cardinalidade codificadas como inteiros ainda forçam partições por prefixos arbitrários (`x <= k`) e prejudicam a generalização.
+*   **A Ponte GenAI (Embeddings):** É por isso que LLMs não leem palavras diretamente. O *One-Hot Encoding* é o ancestral ortogonal do Embedding: ele garante que nenhuma categoria fique artificialmente mais próxima de outra, mas explode em dimensionalidade. Modelos modernos usam embeddings densos aprendidos (`nn.Embedding`) para mapear tokens em um espaço vetorial semântico.
+
+### Escalonamento (StandardScaler vs. MinMaxScaler)
+*   **O Problema Matemático:** Modelos baseados em gradiente (Logistic Regression, SVMs, Redes Neurais) atualizam pesos pela Regra da Cadeia. Features em escalas muito díspares criam vales estreitos na função de perda (loss surface), tornando o Gradient Descent lento ou instável. *(Nota: modelos baseados em árvores, como `RandomForestClassifier`, são invariantes à escala monotônica; mantemos o `StandardScaler` no `Pipeline` por disciplina de engenharia para quando trocarmos o estimador por modelos lineares ou neurais).*
+*   **A Regra de Ouro:** O `StandardScaler` (média 0, desvio padrão 1, ajustado **apenas** no treino dentro do `Pipeline` para evitar data leakage) estabiliza a otimização. Em Deep Learning, o conceito reaparece dentro da rede via `LayerNorm` e `BatchNorm`.
+
+---
+
+## Tópico 2: A Mentira da Acurácia (O Paradoxo do Desbalanceamento)
+
+*   **O Paradoxo:** Em um cenário de detecção de fraudes (onde apenas 0,1% das transações são fraudulentas), um modelo que simplesmente chuta "Não é fraude" para todas as linhas terá **99,9% de Acurácia**. Para executivos, parece perfeito; para engenharia, é um modelo inútil.
+*   **A Ponte GenAI (RAG e Alucinações):** Na arquitetura de IA corporativa, focar na acurácia global mascara problemas críticos. Se um assistente virtual acerta 95 respostas usando a base de conhecimento, mas em 5 ele inventa uma cláusula jurídica (alucinação), a acurácia é 95%, mas o risco sistêmico e legal torna a aplicação inviável.
+
+---
+
+## Tópico 3: O Santo Graal das Métricas (Trabalhando nos Erros)
+
+O verdadeiro trabalho do Arquiteto de IA vive na análise profunda dos erros gerados pelo modelo. Esqueça os "Acertos" e foque na Matriz de Confusão.
+
+### 1. Falso Positivo (FP) - O Alarme Falso
+*   **Conceito:** O modelo previu que ERA (Positivo), mas a realidade é que NÃO ERA (Falso).
+*   **No ML Clássico:** Um filtro de spam que joga um e-mail crítico no lixo.
+*   **No Deep Learning/LLM:** O LLM cita um documento interno como fonte de uma resposta, mas o documento na verdade não diz aquilo (*Alucinação de Citação*).
+
+### 2. Falso Negativo (FN) - A Omissão Crítica
+*   **Conceito:** O modelo previu que NÃO ERA (Negativo), mas a realidade é que ERA (Falso).
+*   **No ML Clássico:** Um modelo médico atestar que um paciente não tem câncer, mandando-o para casa, mas ele tem.
+*   **No Deep Learning/LLM:** O filtro de *Safety Guardrail* diz que o prompt do usuário é seguro, mas na verdade era uma tentativa de injeção de prompt (*Prompt Injection*) para vazar dados.
+
+### Precisão, Recall e F1-Score
+*   **Precisão (Precision = TP / TP + FP):** Das previsões positivas, quantas eram reais?
+    *   *Foco do Arquiteto:* Maximizar Precisão quando o custo de um **FALSO POSITIVO** for catastrófico (ex: IA inventando jurisprudência para um advogado).
+*   **Recall (Revocação = TP / TP + FN):** Dos casos positivos reais, quantos o modelo encontrou?
+    *   *Foco do Arquiteto:* Maximizar Recall quando o custo de um **FALSO NEGATIVO** for catastrófico (ex: deixar passar uma injeção de prompt destrutiva).
+*   **F1-Score:** A Média Harmônica entre Precisão e Recall. O número definitivo para penalizar o modelo caso ele favoreça uma métrica em detrimento drástico da outra.
+
+---
+
+## Prática de Laboratório: Recomendação de Dataset
+**Credit Card Fraud Detection (Kaggle)**
+Dataset altamente desbalanceado (0.17% de fraudes). Ideal para testar a armadilha da Acurácia alta vs. Recall baixo na classe minoritária.
+
+**Desafio do Analista no Colab:**
+1. Construir pipeline com `StandardScaler` e um classificador (`RandomForest` ou outro).
+2. Constatar a acurácia global alta mascarando o fracasso em detectar fraudes.
+3. Testar a técnica de `class_weight='balanced'` para forçar o algoritmo a salvar o Recall das fraudes, sacrificando parte da Acurácia global.
+
+
+## Módulo Avançado: Inferência Causal e Experimentação em Ambientes Complexos
+
+**Objetivo:** Ir além da predição (correlação) para provar o verdadeiro impacto de negócio de uma implementação de IA, utilizando métodos quase-experimentais em cenários onde Testes A/B tradicionais falham devido a interferências de rede e efeitos de *spillover*. Foco em aplicação real com consequências de negócio.
+
+### Técnicas e Exemplos Aplicados a Áreas Básicas
+
+#### 1. Diff-in-Diff (Diferença em Diferenças)
+*   **O Conceito:** Medir o efeito de uma intervenção comparando a mudança ao longo do tempo no grupo tratado com a mudança no grupo de controle, assumindo que eles teriam tendências paralelas sem a intervenção.
+*   **Aplicação Prática (Varejo/E-commerce):** A empresa lança um novo sistema de recomendação por IA apenas no site de São Paulo, mantendo o Rio de Janeiro com o sistema antigo.
+*   **O Desafio Real (Spillover):** E se a campanha de marketing da IA em SP viralizar e atrair compradores do RJ? O diff-in-diff clássico precisa ser ajustado para isolar esse vazamento de influência.
+
+#### 2. Propensity Score Matching (PSM)
+*   **O Conceito:** Quando o tratamento não é aleatório (as pessoas escolhem usar a feature), criamos grupos sintéticos pareáveis baseados na probabilidade (propensity score) de eles terem recebido o tratamento, dadas as suas características.
+*   **Aplicação Prática (Saúde/Aplicativo de Fitness):** Você quer medir se o uso de um "Personal Trainer de IA" diminui o colesterol. Você não pode obrigar as pessoas a usar. Pessoas que baixam a IA já são mais focadas em saúde. O PSM pareará um usuário da IA com um não-usuário que tenha a exata mesma idade, peso e histórico de exercícios (mesma "propensão" a usar o app), medindo a diferença real.
+
+#### 3. Variáveis Instrumentais (Instrumental Variables - IV)
+*   **O Conceito:** Usado quando há variáveis ocultas (confundidores) que afetam tanto quem recebe o tratamento quanto o resultado final. Usamos uma "variável instrumento" que satisfaz três condições: (1) **relevância** (afeta a chance de receber o tratamento), (2) **independência** e (3) **exclusion restriction** (só afeta o resultado *através* do tratamento, nunca diretamente).
+*   **Aplicação Prática (Incentivo Aleatório / Encouragement Design):** A empresa quer saber se um treinamento intensivo de IA aumenta a produtividade/salário, mas funcionários mais motivados fazem o curso e já entregam mais (confundidor oculto). Em vez de usar proxies frágeis como "distância física até a sala" (que na prática pode correlacionar com cargo, senioridade ou trabalho remoto e violar a exclusion restriction), sorteia-se um **voucher/bônus de horas protegidas** para metade dos funcionários (incentivo aleatório). O sorteio do voucher aumenta a adesão ao curso sem afetar diretamente o salário por fora do treinamento.
+
+#### 4. Synthetic Control (Controle Sintético)
+*   **O Conceito:** Criar um "gêmeo digital" do grupo tratado usando uma média ponderada de vários grupos de controle, ideal para quando você tem apenas uma unidade tratada (ex: um país, uma cidade, ou um aplicativo inteiro).
+*   **Aplicação Prática (Lançamento de Produto/Micro-SaaS):** Você lança o modo de "Porta-Retrato Digital Kiosk" no seu app (como o Fotosfy) apenas na Espanha. Não existe um "outro país igual à Espanha" para comparar. O Synthetic Control pegará dados do Brasil, Portugal e Itália e atribuirá pesos matemáticos a cada um para criar uma "Espanha Sintética" (ex: 40% Portugal + 50% Itália + 10% Brasil) que imitava a Espanha real antes do lançamento. A diferença de engajamento após o lançamento entre a Espanha real e a sintética é o seu impacto causal provado.
+
+'''
+Aqui está a adição dos Testes A/B, formatada no exato padrão dos tópicos anteriores. Destaquei o principal problema arquitetural que ocorre na vida real: a contaminação do grupo de controle devido aos efeitos de rede (spillover).
+
+Você pode adicionar este bloco logo no início ou no final da sua seção de "Inferência Causal":
+'''
+
+#### 5. Testes A/B (Randomized Controlled Trials - RCTs) em Redes
+*   **O Conceito:** O "padrão ouro" da experimentação causal. Consiste em dividir a população de forma estritamente aleatória entre um grupo de controle e um de tratamento, garantindo que a única diferença sistemática entre eles seja a intervenção que você deseja testar.
+*   **Aplicação Prática (Redes Sociais/Apps Colaborativos):** Você desenvolve uma feature de IA que sugere títulos automáticos para fotos. Metade da base de usuários (Grupo A) continua digitando manualmente, e a outra metade (Grupo B) recebe as sugestões da IA. Mede-se o tempo gasto na criação do álbum.
+*   **O Desafio Real (Efeito de Rede e Contaminação):** Se o seu produto possui interações sociais (como compartilhamento de álbuns em família), ocorre o *spillover*. Se o usuário do Grupo B usa a IA para criar um álbum incrivelmente rápido e convida o usuário do Grupo A (controle) para colaborar, a experiência do Grupo A foi alterada indiretamente pela IA. O controle foi contaminado. Para resolver isso na prática, Arquitetos de IA não usam A/B Tests individuais, mas sim **Testes A/B Clusterizados (Cluster-Randomized Trials)**, randomizando comunidades inteiras, famílias ou grupos de amigos de uma só vez, em vez de usuários isolados.
+
+'''
+1. Sistemas de Busca e Recomendação (O Core Técnico da Vaga)
+A vaga foca pesado em Search & Discovery. Como você vai estudar Matriz de Confusão e Precisão/Recall neste fim de semana, o degrau seguinte exigido pela vaga são as Métricas de Ranqueamento (Information Retrieval Metrics).
+
+Adicionar ao Roadmap (Fase 3 - RAG e Vetores):
+'''
+
+### Tópico Avançado: Search, Recommendation & Reranking
+*   **Métricas de Relevância (Além da Precisão):** 
+    *   **NDCG (Normalized Discounted Cumulative Gain):** Avalia não apenas se o resultado é relevante, mas se o resultado *mais relevante* apareceu no topo da lista.
+    *   **MRR (Mean Reciprocal Rank):** Foca em quão rápido o usuário encontra o primeiro resultado útil.
+    *   **Recall@K:** Dos documentos relevantes que existem, quantos o modelo conseguiu trazer nas K primeiras posições (ex: top 5 ou top 10).
+*   **Arquitetura Multi-Estágio:** Entender o funil de busca moderna:
+    1.  *Query Understanding:* Classificar a intenção do que o usuário digitou.
+    2.  *Retrieval (Busca de base):* Usar Embeddings (Sentence-Transformers) + Busca Lexical (BM25) para trazer milhares de candidatos rápidos.
+    3.  *Reranking (Reordenação):* Usar um modelo mais pesado (Cross-Encoder) para ordenar os top 100 resultados com precisão cirúrgica antes de mostrar ao usuário.
+	
+'''
+2. Produtos Analíticos "Agent-First"
+Essa é a exigência mais moderna e sofisticada da vaga. Eles não querem apenas dashboards no Power BI para gerentes lerem; eles querem APIs e sistemas analíticos que outros agentes de IA possam consumir.
+
+Adicionar ao Roadmap (Fase 5 - MLOps e Deploy):
+'''	
+### Tópico Avançado: Agent-First Analytics & AI Workflows
+*   **Consumo Programático:** Desenhar saídas de modelos não para consumo humano (tabelas, gráficos), mas estruturadas em esquemas rígidos (JSON, Pydantic) para que pipelines de GenAI tomem decisões autônomas com base nesses dados.
+*   **AI-Powered Workflows:** Automatizar o próprio trabalho de Data Science. Criar agentes que revisam código de experimentação, sugerem amostragens para Testes A/B e geram a documentação base dos testes.
+
+'''
+3. Liderança Técnica Organizacional (O Nível Staff/Principal)
+A vaga repete palavras como "referência", "escalar com o time" e "institucionalizado". Isso é Engenharia de Software aplicada à governança de dados.
+
+Adicionar ao Roadmap (Novo Módulo de Liderança Técnica):
+'''
+
+## Fase 7: Governança, MLOps e Engenharia em Escala
+*   **Padrões Arquiteturais (RFCs e ADRs):** Aprender a escrever RFCs (Request for Comments) e ADRs (Architecture Decision Records) para documentar e defender decisões analíticas (ex: "Por que escolhemos pgvector ao invés de Pinecone", ou "Como padronizaremos os Testes A/B").
+*   **MLOps e Reprodutibilidade:** Integrar `MLflow` (ou Databricks) para versionar não apenas o código, mas o estado exato dos dados e os hiperparâmetros no momento em que o modelo foi treinado. Garantir que qualquer analista consiga reproduzir o modelo em produção com um único comando.
+*   **Métricas de Sucesso (OECs):** Definir o Overall Evaluation Criterion. É a habilidade de provar que a métrica fácil (ex: cliques) é uma "proxy enganosa" e convencer a diretoria a otimizar para a métrica correta (ex: retenção de longo prazo e LTV).
+	

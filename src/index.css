@@ -1,0 +1,168 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-serif: 'Source Serif 4', Georgia, Cambria, serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #F8FAFC;
+    color: #0F172A;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Editorial Markdown Prose Styling */
+.reading-prose {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.72;
+  color: #1E293B;
+  max-width: 70ch;
+}
+
+.reading-prose h1 {
+  font-family: var(--font-sans);
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.22;
+  letter-spacing: -0.02em;
+  color: #0F172A;
+  margin: 0 0 0.75rem 0;
+  text-wrap: balance;
+}
+
+.reading-prose h2 {
+  font-family: var(--font-sans);
+  font-size: 1.35rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  color: #14213D;
+  margin: 2.25rem 0 0.85rem 0;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid #E2E8F0;
+}
+
+.reading-prose h3 {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #0F172A;
+  margin: 1.75rem 0 0.65rem 0;
+}
+
+.reading-prose p {
+  margin: 0.85rem 0;
+}
+
+.reading-prose ul,
+.reading-prose ol {
+  margin: 0.85rem 0;
+  padding-left: 1.4rem;
+}
+
+.reading-prose ul {
+  list-style-type: disc;
+}
+
+.reading-prose ol {
+  list-style-type: decimal;
+}
+
+.reading-prose li {
+  margin: 0.4rem 0;
+}
+
+.reading-prose blockquote {
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 1.35rem 0;
+  padding: 1rem 1.25rem;
+  background-color: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 0.5rem;
+  color: #334155;
+}
+
+.reading-prose blockquote p {
+  margin: 0;
+}
+
+.reading-prose code {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  background-color: #F1F5F9;
+  color: #0F172A;
+  padding: 0.12rem 0.35rem;
+  border-radius: 0.25rem;
+}
+
+.reading-prose pre {
+  font-family: var(--font-mono);
+  font-size: 0.83rem;
+  line-height: 1.55;
+  background-color: #0F172A;
+  color: #E2E8F0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin: 1.25rem 0;
+}
+
+.reading-prose pre code {
+  background-color: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+}
+
+.reading-prose table {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.35rem 0;
+  border: 1px solid #E2E8F0;
+}
+
+.reading-prose th {
+  background-color: #F8FAFC;
+  font-weight: 600;
+  text-align: left;
+  padding: 0.65rem 0.85rem;
+  border-bottom: 1px solid #CBD5E1;
+  color: #0F172A;
+}
+
+.reading-prose td {
+  padding: 0.6rem 0.85rem;
+  border-bottom: 1px solid #E2E8F0;
+  color: #334155;
+  vertical-align: top;
+}
+
+.reading-prose a {
+  color: #0284C7;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.reading-prose hr {
+  border: 0;
+  border-top: 1px solid #E2E8F0;
+  margin: 2rem 0;
+}

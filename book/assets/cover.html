@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<style>
+  @page { size: 6in 9in; margin: 0; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    width: 100vw; height: 100vh; box-sizing: border-box;
+    background: #14213d; color: #f5f3ee;
+    font-family: Georgia, "Times New Roman", serif;
+    display: flex; flex-direction: column; justify-content: space-between;
+    padding: 11vh 10vw 9vh;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+  .serie { font-family: "Segoe UI", Arial, sans-serif; letter-spacing: .18em;
+           text-transform: uppercase; font-size: 2.4vw; color: #fca311; }
+  h1 { font-size: 7.4vw; line-height: 1.12; margin: 3vh 0 0; font-weight: normal; }
+  h1 em { font-style: normal; color: #fca311; }
+  .rule { width: 18vw; height: .5vh; background: #fca311; margin: 4.5vh 0; }
+  .fase { font-family: "Segoe UI", Arial, sans-serif; font-size: 3vw; color: #c9cfdb; }
+  h2 { font-size: 5vw; line-height: 1.15; margin: 1.2vh 0 0; font-weight: normal; }
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 1.2vw; width: 46vw; }
+  .grid span { aspect-ratio: 1; border: .25vw solid #3d5a80; }
+  .grid span.on { background: #fca311; border-color: #fca311; }
+  .autor { font-family: "Segoe UI", Arial, sans-serif; font-size: 2.8vw; letter-spacing: .06em; }
+</style>
+</head>
+<body>
+  <div>
+    <div class="serie">Enterprise AI Architect · Trilha de 32 semanas</div>
+    <h1>{{LIVRO}}</h1>
+    <div class="rule"></div>
+    <div class="fase">{{FASE}} · {{SEMANAS}}</div>
+    <h2>{{TITULO}}</h2>
+  </div>
+  <div>
+    <div class="grid">
+      <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
+      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <p class="autor">Neto Ribeiro</p>
+  </div>
+</body>
+</html>
