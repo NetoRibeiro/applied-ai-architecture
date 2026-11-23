@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { onAuthStateChanged, type User } from 'firebase/auth';
 import { collection, doc, onSnapshot, query, where } from 'firebase/firestore';
+import { AlertTriangle, X } from 'lucide-react';
 import AccessControlView from './components/AccessControlView';
 import ConceptReaderView from './components/ConceptReaderView';
 import CurriculumView from './components/CurriculumView';
@@ -14,9 +15,11 @@ import LogbookView, {
 import {
   OperationType,
   auth,
+  consumeGoogleRedirectResult,
   createLogEntry,
   db,
   ensureUserProfile,
+  formatAuthError,
   handleFirestoreError,
   isBootstrapAdminEmail,
   isFirebaseConfigured,
@@ -24,6 +27,7 @@ import {
   removeLogEntry,
   saveGovernanceDraft,
   signInWithGoogle,
+  signInWithGoogleRedirect,
   signOutUser,
   upsertWeekLog,
 } from './firebase';
@@ -164,12 +168,16 @@ export default function App() {
 
   const firebaseReady = isFirebaseConfigured();
 
-  // Auth listener
+  // Auth listener & redirect completion
   useEffect(() => {
     if (!firebaseReady || !auth) {
       setAuthLoading(false);
       return;
     }
+
+    void consumeGoogleRedirectResult().catch((err) => {
+      setAuthError(formatAuthError(err));
+    });
 
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
       setAuthError(null);
@@ -503,7 +511,16 @@ export default function App() {
     try {
       await signInWithGoogle();
     } catch (err) {
-      setAuthError(err instanceof Error ? err.message : 'Falha ao entrar com Google.');
+      setAuthError(formatAuthError(err));
+    }
+  };
+
+  const handleSignInRedirect = async () => {
+    setAuthError(null);
+    try {
+      await signInWithGoogleRedirect();
+    } catch (err) {
+      setAuthError(formatAuthError(err));
     }
   };
 
@@ -674,6 +691,36 @@ export default function App() {
           </button>
         </div>
       </header>
+
+      {authError && (
+        <div className="mx-auto max-w-[1320px] w-full px-6 pt-4">
+          <div className="bg-red-50 border border-red-200 rounded-xl px-5 py-3.5 text-xs text-red-900 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="flex items-start sm:items-center gap-2.5">
+              <AlertTriangle className="w-4 h-4 text-red-700 shrink-0 mt-0.5 sm:mt-0" />
+              <span className="leading-relaxed">{authError}</span>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+              {typeof window !== 'undefined' && window.self === window.top && firebaseReady && !user && (
+                <button
+                  type="button"
+                  onClick={() => void handleSignInRedirect()}
+                  className="px-3 py-1.5 font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] whitespace-nowrap cursor-pointer"
+                >
+                  Login por Redirecionamento
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => setAuthError(null)}
+                aria-label="Fechar aviso de login"
+                className="p-1 text-red-600 hover:text-red-900 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="flex-1">
         {loading && (

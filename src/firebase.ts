@@ -2,7 +2,9 @@ import { getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import {
   GoogleAuthProvider,
   getAuth,
+  getRedirectResult,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   type Auth,
   type User,
@@ -192,6 +194,41 @@ function getReadyAuth(): Auth {
 
 export async function signInWithGoogle() {
   return signInWithPopup(getReadyAuth(), googleProvider);
+}
+
+export async function signInWithGoogleRedirect() {
+  return signInWithRedirect(getReadyAuth(), googleProvider);
+}
+
+export async function consumeGoogleRedirectResult() {
+  if (!auth) return null;
+  return getRedirectResult(auth);
+}
+
+export function formatAuthError(error: unknown): string {
+  const host = typeof window !== 'undefined' ? window.location.hostname : '';
+  const code =
+    typeof error === 'object' && error !== null && 'code' in error
+      ? String((error as { code?: unknown }).code ?? '')
+      : '';
+  const message = error instanceof Error ? error.message : String(error);
+
+  if (code === 'auth/unauthorized-domain' || message.includes('auth/unauthorized-domain')) {
+    return `Domínio não autorizado no Firebase (${host}). Adicione "${host}" em Firebase Console → Authentication → Settings → Authorized domains.`;
+  }
+  if (code === 'auth/popup-closed-by-user' || message.includes('auth/popup-closed-by-user')) {
+    return `A janela de login foi fechada antes de concluir (${code || 'auth/popup-closed-by-user'}). Se estiver em um domínio próprio da VPS, tente o login por redirecionamento ou verifique se "${host}" está autorizado no Firebase.`;
+  }
+  if (code === 'auth/popup-blocked' || message.includes('auth/popup-blocked')) {
+    return 'O navegador bloqueou a janela popup do Google. Permita popups ou use o botão de login por redirecionamento.';
+  }
+  if (code === 'auth/operation-not-allowed' || message.includes('auth/operation-not-allowed')) {
+    return 'O provedor Google não está habilitado em Firebase Console → Authentication → Sign-in method.';
+  }
+  if (code === 'auth/invalid-api-key' || code === 'auth/app-not-authorized') {
+    return `Configuração do Firebase inválida neste servidor (${code}). Confira FIREBASE_CONFIG_JSON ou FIREBASE_API_KEY / FIREBASE_AUTH_DOMAIN no EasyPanel.`;
+  }
+  return code ? `${message} (${code})` : message;
 }
 
 export async function signOutUser() {
