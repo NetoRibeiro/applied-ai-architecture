@@ -24,6 +24,7 @@ import {
 import type { RegistrationMode, UserProfile, UserRole, UserStatus } from '../types';
 
 interface AccessControlViewProps {
+  firebaseConfigured: boolean;
   user: User | null;
   profile: UserProfile | null;
   authLoading: boolean;
@@ -48,6 +49,7 @@ const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export default function AccessControlView({
+  firebaseConfigured,
   user,
   profile,
   authLoading,
@@ -164,8 +166,27 @@ export default function AccessControlView({
         </div>
       )}
 
+      {/* Unconfigured Firebase on VPS/EasyPanel */}
+      {!firebaseConfigured && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 max-w-3xl space-y-3 text-sm text-amber-950">
+          <div className="font-semibold">Configuração do Firebase pendente neste servidor</div>
+          <p className="text-amber-900 leading-relaxed">
+            A aplicação está rodando normalmente no modo local, mas como o arquivo{' '}
+            <code className="font-mono text-xs bg-amber-100 px-1.5 py-0.5 rounded">firebase-applet-config.json</code>{' '}
+            fica fora do repositório Git, é necessário informar as credenciais públicas do seu Firebase nas variáveis de ambiente do EasyPanel:
+          </p>
+          <pre className="text-xs font-mono bg-[#0F172A] text-slate-100 p-4 rounded-lg overflow-x-auto">
+            <code>{`VITE_ADMIN_EMAIL=dsjuvencio@gmail.com
+FIREBASE_CONFIG_JSON={"projectId":"...","appId":"...","apiKey":"...","authDomain":"...","firestoreDatabaseId":"(default)"}`}</code>
+          </pre>
+          <p className="text-xs text-amber-900">
+            Após salvar as variáveis no EasyPanel e reiniciar o serviço, o login com Google e o Firestore serão ativados automaticamente sem precisar alterar o código.
+          </p>
+        </div>
+      )}
+
       {/* Unauthenticated State */}
-      {!authLoading && !user && (
+      {firebaseConfigured && !authLoading && !user && (
         <div className="bg-white border border-slate-200 rounded-xl p-8 max-w-2xl space-y-5">
           <div className="flex items-center gap-3 text-[#14213D]">
             <KeyRound className="w-5 h-5" />

@@ -9,6 +9,7 @@ interface CurriculumViewProps {
   weeks: WeekMeta[];
   completedWeeks: number[];
   weekLogs: Record<number, WeekLogState>;
+  firebaseConfigured: boolean;
   user: User | null;
   profile: UserProfile | null;
   onSignIn: () => Promise<void>;
@@ -59,6 +60,7 @@ export default function CurriculumView({
   weeks,
   completedWeeks,
   weekLogs,
+  firebaseConfigured,
   user,
   profile,
   onSignIn,
@@ -223,7 +225,23 @@ export default function CurriculumView({
 
       {/* Community Login / Personal Sync Strip */}
       <section className="bg-white border border-slate-200 rounded-xl px-6 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {!user ? (
+        {!firebaseConfigured ? (
+          <>
+            <div className="flex items-start sm:items-center gap-3 text-sm text-slate-700">
+              <Cloud className="w-4 h-4 text-slate-500 shrink-0 mt-0.5 sm:mt-0" />
+              <span>
+                <strong>Modo estudo local ativo:</strong> para habilitar contas de usuários e banco na nuvem, configure <code className="font-mono text-xs bg-slate-100 px-1 rounded">FIREBASE_CONFIG_JSON</code> nas variáveis do servidor.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenAccess}
+              className="px-3.5 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg whitespace-nowrap shrink-0 cursor-pointer self-start sm:self-auto"
+            >
+              Ver Instruções
+            </button>
+          </>
+        ) : !user ? (
           <>
             <div className="flex items-start sm:items-center gap-3 text-sm text-slate-700">
               <Cloud className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5 sm:mt-0" />

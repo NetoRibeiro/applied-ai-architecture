@@ -3,12 +3,14 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
+import { initFirebase } from './firebase';
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  </StrictMode>,
-);
-
+void initFirebase().finally(() => {
+  createRoot(document.getElementById('root')!).render(
+    <StrictMode>
+      <ErrorBoundary>
+        <App />
+      </ErrorBoundary>
+    </StrictMode>,
+  );
+});

@@ -19,6 +19,7 @@ import {
   ensureUserProfile,
   handleFirestoreError,
   isBootstrapAdminEmail,
+  isFirebaseConfigured,
   migrateLocalProgressToCloud,
   removeLogEntry,
   saveGovernanceDraft,
@@ -161,8 +162,15 @@ export default function App() {
     };
   }, []);
 
+  const firebaseReady = isFirebaseConfigured();
+
   // Auth listener
   useEffect(() => {
+    if (!firebaseReady || !auth) {
+      setAuthLoading(false);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (nextUser) => {
       setAuthError(null);
       if (!nextUser) {
@@ -190,11 +198,11 @@ export default function App() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [firebaseReady]);
 
   // User profile & access policy listeners
   useEffect(() => {
-    if (!user || !user.emailVerified) return;
+    if (!firebaseReady || !db || !user || !user.emailVerified) return;
 
     const userDocPath = `users/${user.uid}`;
     const unsubProfile = onSnapshot(
@@ -228,19 +236,19 @@ export default function App() {
       unsubProfile();
       unsubConfig();
     };
-  }, [user]);
+  }, [firebaseReady, user]);
 
   const isAdmin =
     Boolean(user?.emailVerified && isBootstrapAdminEmail(user.email)) ||
     profile?.role === 'admin';
 
   const canPersistToCloud = Boolean(
-    user && user.emailVerified && profile?.status === 'approved',
+    firebaseReady && user && user.emailVerified && profile?.status === 'approved',
   );
 
   // Admin users directory listener
   useEffect(() => {
-    if (!user || !user.emailVerified || !isAdmin) {
+    if (!firebaseReady || !db || !user || !user.emailVerified || !isAdmin) {
       setAllUsers([]);
       return;
     }
@@ -266,11 +274,11 @@ export default function App() {
     );
 
     return () => unsubUsers();
-  }, [user, isAdmin]);
+  }, [firebaseReady, user, isAdmin]);
 
   // Approved user cloud data listeners (weekLogs, logEntries, governance drafts)
   useEffect(() => {
-    if (!user || !canPersistToCloud) {
+    if (!firebaseReady || !db || !user || !canPersistToCloud) {
       setCloudWeekLogs({});
       setCloudWeekIds(new Set());
       setCloudLogEntries([]);
@@ -373,7 +381,7 @@ export default function App() {
       unsubEntries();
       unsubDrafts();
     };
-  }, [user, canPersistToCloud]);
+  }, [firebaseReady, user, canPersistToCloud]);
 
   const weekLogs = canPersistToCloud ? cloudWeekLogs : localWeekLogs;
   const logEntries = canPersistToCloud ? cloudLogEntries : localLogEntries;
@@ -517,15 +525,17 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const accountButtonLabel = !user
-    ? 'Entrar com Google'
-    : isAdmin
-      ? 'Admin · Acesso'
-      : profile?.status === 'pending'
-        ? 'Conta · Pendente'
-        : profile?.status === 'revoked'
-          ? 'Conta · Suspensa'
-          : 'Conta · Nuvem';
+  const accountButtonLabel = !firebaseReady
+    ? 'Configurar Firebase'
+    : !user
+      ? 'Entrar com Google'
+      : isAdmin
+        ? 'Admin · Acesso'
+        : profile?.status === 'pending'
+          ? 'Conta · Pendente'
+          : profile?.status === 'revoked'
+            ? 'Conta · Suspensa'
+            : 'Conta · Nuvem';
 
   return (
     <div className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A]">
@@ -605,10 +615,10 @@ export default function App() {
             <button
               type="button"
               onClick={() => {
-                if (!user) {
-                  void handleSignIn();
-                } else {
+                if (!firebaseReady || user) {
                   setView('access');
+                } else {
+                  void handleSignIn();
                 }
               }}
               className="px-4 py-2 text-xs font-medium text-white bg-[#14213D] rounded-lg hover:bg-[#1E3158] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
@@ -688,6 +698,7 @@ export default function App() {
                 weeks={weeks}
                 completedWeeks={completedWeeks}
                 weekLogs={weekLogs}
+                firebaseConfigured={firebaseReady}
                 user={user}
                 profile={profile}
                 onSignIn={handleSignIn}
@@ -727,6 +738,7 @@ export default function App() {
                 weeks={weeks}
                 weekLogs={weekLogs}
                 logEntries={logEntries}
+                firebaseConfigured={firebaseReady}
                 user={user}
                 profile={profile}
                 canPersistToCloud={canPersistToCloud}
@@ -755,6 +767,7 @@ export default function App() {
 
             {view === 'access' && (
               <AccessControlView
+                firebaseConfigured={firebaseReady}
                 user={user}
                 profile={profile}
                 authLoading={authLoading}

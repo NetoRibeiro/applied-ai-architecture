@@ -1,4 +1,4 @@
-# Multi-stage Dockerfile for Applied AI Architecture Workbench
+# Multi-stage Dockerfile for Applied AI Architecture Workbench (VPS / EasyPanel ready)
 FROM node:22-alpine AS builder
 
 WORKDIR /app
@@ -22,7 +22,8 @@ COPY package.json ./
 RUN npm install --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY server.ts tsconfig.json firebase-applet-config.json LOGBOOK.md ./
+COPY server.ts tsconfig.json LOGBOOK.md ./
+COPY firebase-applet-config*.json ./
 COPY src/types.ts ./src/types.ts
 COPY 01-Phase-1-Math-and-ML-Core ./01-Phase-1-Math-and-ML-Core
 COPY 02-Phase-2-Deep-Learning ./02-Phase-2-Deep-Learning
@@ -34,7 +35,7 @@ COPY 07-Phase-7-Governance-and-Scale ./07-Phase-7-Governance-and-Scale
 
 EXPOSE 3000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD sh -c 'wget -qO- "http://127.0.0.1:${PORT:-3000}/api/health" >/dev/null || exit 1'
 
 CMD ["./node_modules/.bin/tsx", "server.ts"]

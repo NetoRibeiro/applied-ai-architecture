@@ -1,9 +1,10 @@
-import { initializeApp } from 'firebase/app';
+import { getApps, initializeApp, type FirebaseApp } from 'firebase/app';
 import {
   GoogleAuthProvider,
   getAuth,
   signInWithPopup,
   signOut,
+  type Auth,
   type User,
 } from 'firebase/auth';
 import {
@@ -17,8 +18,8 @@ import {
   setDoc,
   updateDoc,
   writeBatch,
+  type Firestore,
 } from 'firebase/firestore';
-import firebaseConfig from '../firebase-applet-config.json';
 import type {
   LogbookEntry,
   RegistrationMode,
@@ -28,19 +29,52 @@ import type {
   WeekLogState,
 } from './types';
 
-export const ADMIN_BOOTSTRAP_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL ?? '').trim().toLowerCase();
+interface FirebaseClientConfig {
+  apiKey: string;
+  authDomain?: string;
+  projectId: string;
+  storageBucket?: string;
+  messagingSenderId?: string;
+  appId: string;
+  firestoreDatabaseId?: string;
+}
+
+const bundledModules = import.meta.glob('../firebase-applet-config.json', {
+  eager: true,
+}) as Record<string, { default?: FirebaseClientConfig } & Partial<FirebaseClientConfig>>;
+
+function getBundledFirebaseConfig(): FirebaseClientConfig | null {
+  const mod = Object.values(bundledModules)[0];
+  if (!mod) return null;
+  const candidate = (mod.default ?? mod) as Partial<FirebaseClientConfig>;
+  if (candidate.apiKey && candidate.projectId && candidate.appId) {
+    return candidate as FirebaseClientConfig;
+  }
+  return null;
+}
+
+let runtimeAdminEmail = (import.meta.env.VITE_ADMIN_EMAIL ?? '').trim().toLowerCase();
+let app: FirebaseApp | null = null;
+export let db: Firestore | null = null;
+export let auth: Auth | null = null;
+export const googleProvider = new GoogleAuthProvider();
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+let initPromise: Promise<void> | null = null;
+
+export function getAdminBootstrapEmail(): string {
+  return runtimeAdminEmail;
+}
 
 export function isBootstrapAdminEmail(email?: string | null): boolean {
   return Boolean(
-    ADMIN_BOOTSTRAP_EMAIL && email && email.trim().toLowerCase() === ADMIN_BOOTSTRAP_EMAIL,
+    runtimeAdminEmail && email && email.trim().toLowerCase() === runtimeAdminEmail,
   );
 }
 
-const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
-export const auth = getAuth(app);
-export const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
+export function isFirebaseConfigured(): boolean {
+  return Boolean(db && auth);
+}
 
 export enum OperationType {
   CREATE = 'create',
@@ -76,13 +110,13 @@ export function handleFirestoreError(
   const errInfo: FirestoreErrorInfo = {
     error: error instanceof Error ? error.message : String(error),
     authInfo: {
-      userId: auth.currentUser?.uid,
-      email: auth.currentUser?.email,
-      emailVerified: auth.currentUser?.emailVerified,
-      isAnonymous: auth.currentUser?.isAnonymous,
-      tenantId: auth.currentUser?.tenantId,
+      userId: auth?.currentUser?.uid,
+      email: auth?.currentUser?.email,
+      emailVerified: auth?.currentUser?.emailVerified,
+      isAnonymous: auth?.currentUser?.isAnonymous,
+      tenantId: auth?.currentUser?.tenantId,
       providerInfo:
-        auth.currentUser?.providerData?.map((provider) => ({
+        auth?.currentUser?.providerData?.map((provider) => ({
           providerId: provider.providerId,
           email: provider.email,
         })) || [],
@@ -95,6 +129,7 @@ export function handleFirestoreError(
 }
 
 async function testConnection() {
+  if (!db) return;
   try {
     await getDocFromServer(doc(db, 'test', 'connection'));
   } catch (error) {
@@ -104,14 +139,63 @@ async function testConnection() {
   }
 }
 
-void testConnection();
+export async function initFirebase(): Promise<void> {
+  if (initPromise) return initPromise;
+
+  initPromise = (async () => {
+    let config = getBundledFirebaseConfig();
+
+    if (!config || !runtimeAdminEmail) {
+      try {
+        const res = await fetch('/api/public-config');
+        if (res.ok) {
+          const data = (await res.json()) as {
+            adminEmail?: string;
+            firebase?: FirebaseClientConfig | null;
+          };
+          if (!runtimeAdminEmail && data.adminEmail) {
+            runtimeAdminEmail = data.adminEmail.trim().toLowerCase();
+          }
+          if (!config && data.firebase?.apiKey && data.firebase?.projectId && data.firebase?.appId) {
+            config = data.firebase;
+          }
+        }
+      } catch {
+        // fallback cleanly when offline or config unavailable
+      }
+    }
+
+    if (config) {
+      app = getApps().length > 0 ? getApps()[0] : initializeApp(config);
+      db = getFirestore(app, config.firestoreDatabaseId || '(default)');
+      auth = getAuth(app);
+      void testConnection();
+    }
+  })();
+
+  return initPromise;
+}
+
+function getReadyDb(): Firestore {
+  if (!db) {
+    throw new Error('Firebase Firestore não configurado neste ambiente.');
+  }
+  return db;
+}
+
+function getReadyAuth(): Auth {
+  if (!auth) {
+    throw new Error('Firebase Authentication não configurado neste ambiente.');
+  }
+  return auth;
+}
 
 export async function signInWithGoogle() {
-  return signInWithPopup(auth, googleProvider);
+  return signInWithPopup(getReadyAuth(), googleProvider);
 }
 
 export async function signOutUser() {
-  return signOut(auth);
+  return signOut(getReadyAuth());
 }
 
 export function formatWeekDocId(week: number): string {
@@ -119,8 +203,9 @@ export function formatWeekDocId(week: number): string {
 }
 
 export async function ensureUserProfile(user: User): Promise<void> {
+  const firestore = getReadyDb();
   const userPath = `users/${user.uid}`;
-  const userRef = doc(db, 'users', user.uid);
+  const userRef = doc(firestore, 'users', user.uid);
   const isOwnerAdmin = isBootstrapAdminEmail(user.email) && user.emailVerified;
 
   let existingSnap;
@@ -145,7 +230,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
       initialRole = 'admin';
     } else {
       try {
-        const configSnap = await getDoc(doc(db, 'config', 'access'));
+        const configSnap = await getDoc(doc(firestore, 'config', 'access'));
         if (configSnap.exists() && configSnap.data()?.registrationMode === 'approval_required') {
           initialStatus = 'pending';
         }
@@ -176,7 +261,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
 
     if (isOwnerAdmin) {
       try {
-        const configRef = doc(db, 'config', 'access');
+        const configRef = doc(firestore, 'config', 'access');
         const configSnap = await getDoc(configRef);
         if (!configSnap.exists()) {
           await setDoc(configRef, {
@@ -209,7 +294,7 @@ export async function ensureUserProfile(user: User): Promise<void> {
 
   if (isOwnerAdmin) {
     try {
-      const configRef = doc(db, 'config', 'access');
+      const configRef = doc(firestore, 'config', 'access');
       const configSnap = await getDoc(configRef);
       if (!configSnap.exists()) {
         await setDoc(configRef, {
@@ -230,9 +315,10 @@ export async function upsertWeekLog(
   state: WeekLogState,
   knownExists: boolean,
 ): Promise<void> {
+  const firestore = getReadyDb();
   const weekId = formatWeekDocId(week);
   const docPath = `users/${uid}/weekLogs/${weekId}`;
-  const ref = doc(db, 'users', uid, 'weekLogs', weekId);
+  const ref = doc(firestore, 'users', uid, 'weekLogs', weekId);
 
   const normalizedSteps = {
     reading: Boolean(state.steps.reading),
@@ -292,7 +378,8 @@ export async function createLogEntry(
   uid: string,
   entry: Omit<LogbookEntry, 'id'>,
 ): Promise<string> {
-  const colRef = collection(db, 'users', uid, 'logEntries');
+  const firestore = getReadyDb();
+  const colRef = collection(firestore, 'users', uid, 'logEntries');
   const newRef = doc(colRef);
   const docPath = `users/${uid}/logEntries/${newRef.id}`;
 
@@ -321,9 +408,10 @@ export async function createLogEntry(
 }
 
 export async function removeLogEntry(uid: string, entryId: string): Promise<void> {
+  const firestore = getReadyDb();
   const docPath = `users/${uid}/logEntries/${entryId}`;
   try {
-    await deleteDoc(doc(db, 'users', uid, 'logEntries', entryId));
+    await deleteDoc(doc(firestore, 'users', uid, 'logEntries', entryId));
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, docPath);
   }
@@ -334,8 +422,9 @@ export async function saveGovernanceDraft(
   kind: 'adr' | 'rfc',
   content: string,
 ): Promise<void> {
+  const firestore = getReadyDb();
   const docPath = `users/${uid}/drafts/${kind}`;
-  const ref = doc(db, 'users', uid, 'drafts', kind);
+  const ref = doc(firestore, 'users', uid, 'drafts', kind);
   const safeContent = content.slice(0, 50000);
 
   let snap;
@@ -374,8 +463,9 @@ export async function updateAccessPolicy(
   adminUid: string,
   registrationMode: RegistrationMode,
 ): Promise<void> {
+  const firestore = getReadyDb();
   const configPath = 'config/access';
-  const ref = doc(db, 'config', 'access');
+  const ref = doc(firestore, 'config', 'access');
 
   let snap;
   try {
@@ -414,11 +504,12 @@ export async function adminUpdateUser(
   adminUid: string,
   canManageAdminMarkers: boolean,
 ): Promise<void> {
+  const firestore = getReadyDb();
   const userPath = `users/${targetUser.uid}`;
   const nextStatus = patch.status ?? targetUser.status;
   const nextRole = patch.role ?? targetUser.role;
 
-  const batch = writeBatch(db);
+  const batch = writeBatch(firestore);
   const userUpdate: Record<string, unknown> = {
     updatedAt: serverTimestamp(),
   };
@@ -428,10 +519,10 @@ export async function adminUpdateUser(
   if (patch.role !== undefined) {
     userUpdate.role = nextRole;
   }
-  batch.update(doc(db, 'users', targetUser.uid), userUpdate);
+  batch.update(doc(firestore, 'users', targetUser.uid), userUpdate);
 
   if (canManageAdminMarkers && patch.role !== undefined && patch.role !== targetUser.role) {
-    const adminRef = doc(db, 'admins', targetUser.uid);
+    const adminRef = doc(firestore, 'admins', targetUser.uid);
     if (nextRole === 'admin') {
       batch.set(adminRef, {
         uid: targetUser.uid,
@@ -452,21 +543,23 @@ export async function adminUpdateUser(
 }
 
 export async function adminDeleteUser(targetUid: string): Promise<void> {
+  const firestore = getReadyDb();
   const userPath = `users/${targetUid}`;
   try {
-    await deleteDoc(doc(db, 'users', targetUid));
+    await deleteDoc(doc(firestore, 'users', targetUid));
   } catch (error) {
     handleFirestoreError(error, OperationType.DELETE, userPath);
   }
 }
 
 export async function adminApproveAllPending(users: UserProfile[]): Promise<number> {
+  const firestore = getReadyDb();
   const pending = users.filter((u) => u.status === 'pending');
   if (pending.length === 0) return 0;
 
-  const batch = writeBatch(db);
+  const batch = writeBatch(firestore);
   for (const u of pending) {
-    batch.update(doc(db, 'users', u.uid), {
+    batch.update(doc(firestore, 'users', u.uid), {
       status: 'approved',
       updatedAt: serverTimestamp(),
     });

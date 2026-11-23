@@ -40,27 +40,26 @@ O servidor inicia na porta `3000` e oferece cinco áreas integradas:
 - **Governança:** editores Markdown com pré-visualização ao vivo baseados nos templates oficiais de ADR e RFC da Fase 7, sincronizados na nuvem.
 - **Conta & Controle de Acesso:** login via Google (Firebase Auth), persistência por usuário no Firestore e painel administrativo para aprovar, suspender ou gerenciar papéis de acesso.
 
-### Deploy via Docker na VPS (e setup para forks)
+### Deploy via Docker na VPS / EasyPanel (e setup para forks)
 
-Como `firebase-applet-config.json`, `firestore.rules` e `.env` ficam no `.gitignore` para não expor e-mail de administrador nem configurações do seu ambiente no repositório público, ao clonar/fazer fork para rodar na sua VPS ou máquina local:
+Como `firebase-applet-config.json`, `firestore.rules` e `.env` ficam no `.gitignore`, o build Docker funciona mesmo sem esses arquivos no repositório. Para habilitar o login Google e o banco Firestore na sua VPS/EasyPanel:
 
+**Opção A — EasyPanel (variáveis de ambiente em runtime):**
+1. Conecte o repositório usando o `Dockerfile`.
+2. Na aba **Environment / .env** do EasyPanel, adicione:
+   ```env
+   VITE_ADMIN_EMAIL=seu-email-admin@exemplo.com
+   FIREBASE_CONFIG_JSON={"projectId":"...","appId":"...","apiKey":"...","authDomain":"...","firestoreDatabaseId":"(default)"}
+   ```
+3. Publique as regras de `firestore.rules.example` (substituindo `admin@exemplo.com` pelo seu e-mail) no projeto Firebase e adicione o domínio do EasyPanel em **Firebase Console → Authentication → Settings → Authorized domains**.
+
+**Opção B — Docker Compose direto na VPS:**
 ```bash
-# 1. Crie os arquivos locais a partir dos modelos
 cp .env.example .env
 cp firebase-applet-config.example.json firebase-applet-config.json
 cp firestore.rules.example firestore.rules
-
-# 2. Edite .env (VITE_ADMIN_EMAIL=seu-email), firebase-applet-config.json
-#    e substitua admin@exemplo.com em firestore.rules antes de publicar as regras no Firebase
-
-# 3. Suba o container em background na VPS
 docker compose up -d --build
-
-# 4. Acompanhe logs
-docker compose logs -f workbench
 ```
-
-> **Importante para Login Google na VPS:** ao publicar em um domínio ou IP próprio (por exemplo, via Nginx/Caddy/Traefik com HTTPS), adicione o domínio da sua VPS em **Firebase Console → Authentication → Settings → Authorized domains** para que o popup de login Google funcione normalmente.
 
 ## Para quem é
 

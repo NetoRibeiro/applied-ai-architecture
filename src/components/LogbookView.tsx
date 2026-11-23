@@ -61,6 +61,7 @@ interface LogbookViewProps {
   weeks: WeekMeta[];
   weekLogs: Record<number, WeekLogState>;
   logEntries: LogbookEntry[];
+  firebaseConfigured: boolean;
   user: User | null;
   profile: UserProfile | null;
   canPersistToCloud: boolean;
@@ -82,6 +83,7 @@ export default function LogbookView({
   weeks,
   weekLogs,
   logEntries,
+  firebaseConfigured,
   user,
   profile,
   canPersistToCloud,
@@ -110,7 +112,7 @@ export default function LogbookView({
   const [entryBlockers, setEntryBlockers] = useState('');
   const [entryCommand, setEntryCommand] = useState('');
 
-  if (!canPersistToCloud) {
+  if (firebaseConfigured && !canPersistToCloud) {
     return (
       <div className="mx-auto max-w-[900px] px-6 py-12 space-y-6">
         <div className="bg-white border border-slate-200 rounded-xl p-8 space-y-5">
@@ -340,24 +342,44 @@ export default function LogbookView({
       </div>
 
       <div className="bg-white border border-slate-200 rounded-xl px-5 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
-        <div className="flex items-center gap-2">
-          <Cloud className="w-4 h-4 text-[#0284C7] shrink-0" />
-          <span>
-            Sincronizado em tempo real na conta <strong>{user?.email}</strong> (Firestore)
-          </span>
-        </div>
-        {hasLocalMigration && (
-          <button
-            type="button"
-            disabled={migrating}
-            onClick={() => void onMigrateLocal()}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] cursor-pointer disabled:opacity-50 self-start sm:self-auto"
-          >
-            <UploadCloud className="w-3.5 h-3.5" />
-            <span>
-              {migrating ? 'Importando...' : 'Importar progresso local do navegador'}
-            </span>
-          </button>
+        {firebaseConfigured ? (
+          <>
+            <div className="flex items-center gap-2">
+              <Cloud className="w-4 h-4 text-[#0284C7] shrink-0" />
+              <span>
+                Sincronizado em tempo real na conta <strong>{user?.email}</strong> (Firestore)
+              </span>
+            </div>
+            {hasLocalMigration && (
+              <button
+                type="button"
+                disabled={migrating}
+                onClick={() => void onMigrateLocal()}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] cursor-pointer disabled:opacity-50 self-start sm:self-auto"
+              >
+                <UploadCloud className="w-3.5 h-3.5" />
+                <span>
+                  {migrating ? 'Importando...' : 'Importar progresso local do navegador'}
+                </span>
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-slate-500 shrink-0" />
+              <span>
+                Modo local no navegador — adicione <code className="font-mono bg-slate-100 px-1 rounded">FIREBASE_CONFIG_JSON</code> no servidor para habilitar login Google e banco Firestore.
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={onOpenAccess}
+              className="px-3 py-1.5 text-xs font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md cursor-pointer self-start sm:self-auto"
+            >
+              Ver Configuração
+            </button>
+          </>
         )}
       </div>
 

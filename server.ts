@@ -204,6 +204,62 @@ async function startServer() {
     res.json({ ok: true });
   });
 
+  app.get('/api/public-config', async (_req, res) => {
+    const adminEmail = (process.env.VITE_ADMIN_EMAIL || process.env.ADMIN_EMAIL || '')
+      .trim()
+      .toLowerCase();
+
+    let firebase: Record<string, string> | null = null;
+
+    if (process.env.FIREBASE_CONFIG_JSON) {
+      try {
+        const parsed = JSON.parse(process.env.FIREBASE_CONFIG_JSON) as Record<string, string>;
+        if (parsed.apiKey && parsed.projectId && parsed.appId) {
+          firebase = parsed;
+        }
+      } catch {
+        // invalid FIREBASE_CONFIG_JSON env var
+      }
+    }
+
+    if (
+      !firebase &&
+      process.env.FIREBASE_API_KEY &&
+      process.env.FIREBASE_PROJECT_ID &&
+      process.env.FIREBASE_APP_ID
+    ) {
+      firebase = {
+        apiKey: process.env.FIREBASE_API_KEY,
+        authDomain:
+          process.env.FIREBASE_AUTH_DOMAIN || `${process.env.FIREBASE_PROJECT_ID}.firebaseapp.com`,
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        storageBucket:
+          process.env.FIREBASE_STORAGE_BUCKET ||
+          `${process.env.FIREBASE_PROJECT_ID}.firebasestorage.app`,
+        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || '',
+        appId: process.env.FIREBASE_APP_ID,
+        firestoreDatabaseId: process.env.FIREBASE_DATABASE_ID || '(default)',
+      };
+    }
+
+    if (!firebase) {
+      try {
+        const rawConfig = await fs.readFile(
+          path.join(ROOT_DIR, 'firebase-applet-config.json'),
+          'utf-8',
+        );
+        const parsed = JSON.parse(rawConfig) as Record<string, string>;
+        if (parsed.apiKey && parsed.projectId && parsed.appId) {
+          firebase = parsed;
+        }
+      } catch {
+        // firebase-applet-config.json not present in container
+      }
+    }
+
+    res.json({ adminEmail, firebase });
+  });
+
   app.get('/api/curriculum', (_req, res) => {
     res.json({
       phases: PHASES,
