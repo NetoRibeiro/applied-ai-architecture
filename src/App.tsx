@@ -7,6 +7,7 @@ import ConceptReaderView from './components/ConceptReaderView';
 import CurriculumView from './components/CurriculumView';
 import GovernanceView from './components/GovernanceView';
 import InteractiveLabsView from './components/InteractiveLabsView';
+import LandingView from './components/LandingView';
 import LogbookView, {
   WEEKLY_STEPS,
   countCompletedSteps,
@@ -41,7 +42,7 @@ import type {
   WeeklyStepId,
 } from './types';
 
-type ViewMode = 'curriculum' | 'reader' | 'labs' | 'logbook' | 'governance' | 'access';
+type ViewMode = 'landing' | 'curriculum' | 'reader' | 'labs' | 'logbook' | 'governance' | 'access';
 
 const STORAGE_WEEK_LOGS_KEY = 'ai_architect_week_logs_v2';
 const STORAGE_COMPLETED_LEGACY_KEY = 'ai_architect_completed_weeks_v1';
@@ -83,7 +84,7 @@ function loadInitialWeekLogs(): Record<number, WeekLogState> {
 }
 
 export default function App() {
-  const [view, setView] = useState<ViewMode>('curriculum');
+  const [view, setView] = useState<ViewMode>('landing');
   const [phases, setPhases] = useState<PhaseInfo[]>([]);
   const [weeks, setWeeks] = useState<WeekMeta[]>([]);
   const [loading, setLoading] = useState(true);
@@ -562,14 +563,25 @@ export default function App() {
           {/* Zone 1: Single text element wordmark */}
           <button
             type="button"
-            onClick={() => setView('curriculum')}
+            onClick={() => setView('landing')}
             className="text-base sm:text-lg font-bold tracking-tight text-[#14213D] whitespace-nowrap shrink-0 cursor-pointer"
           >
             AI Architect Foundations
           </button>
 
-          {/* Zone 2: 5 concise single-line nav links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-slate-600">
+          {/* Zone 2: Concise single-line nav links */}
+          <nav className="hidden md:flex items-center gap-5 text-sm font-medium text-slate-600">
+            <button
+              type="button"
+              onClick={() => setView('landing')}
+              className={`hover:text-[#0F172A] transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                view === 'landing'
+                  ? 'text-[#0F172A] underline underline-offset-8 decoration-2 decoration-[#FCA311]'
+                  : ''
+              }`}
+            >
+              Início
+            </button>
             <button
               type="button"
               onClick={() => setView('curriculum')}
@@ -647,6 +659,13 @@ export default function App() {
 
         {/* Mobile navigation row */}
         <div className="md:hidden border-t border-slate-100 px-4 py-2 flex items-center gap-4 overflow-x-auto text-xs font-medium text-slate-600">
+          <button
+            type="button"
+            onClick={() => setView('landing')}
+            className={`whitespace-nowrap shrink-0 py-1 ${view === 'landing' ? 'text-[#0F172A] font-semibold' : ''}`}
+          >
+            Início
+          </button>
           <button
             type="button"
             onClick={() => setView('curriculum')}
@@ -739,6 +758,36 @@ export default function App() {
 
         {!loading && !error && (
           <>
+            {view === 'landing' && (
+              <LandingView
+                phases={phases}
+                weeks={weeks}
+                completedWeeks={completedWeeks}
+                weekLogs={weekLogs}
+                logEntriesCount={logEntries.length}
+                firebaseConfigured={firebaseReady}
+                user={user}
+                profile={profile}
+                onSignIn={handleSignIn}
+                onOpenCurriculum={() => {
+                  setView('curriculum');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenLogbook={() => {
+                  setView('logbook');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenLabs={() => {
+                  setView('labs');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenAccess={() => {
+                  setView('access');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+              />
+            )}
+
             {view === 'curriculum' && (
               <CurriculumView
                 phases={phases}
