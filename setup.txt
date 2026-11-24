@@ -1,4 +1,4 @@
-ai-architect-foundations/
+applied-ai-architecture/
 │
 ├── README.md
 ├── ROADMAP.md

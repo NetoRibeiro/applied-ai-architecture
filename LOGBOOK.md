@@ -8,8 +8,8 @@ Este documento registra cronologicamente todos os comandos de terminal, scripts 
 Clonagem do repositório público recém-criado no GitHub para o ambiente local (integrado ao Google Drive):
 
 ```bash
-git clone https://github.com/SEU_USUARIO/ai-architect-foundations.git
-cd ai-architect-foundations
+git clone https://github.com/SEU_USUARIO/applied-ai-architecture.git
+cd applied-ai-architecture
 ```
 
 ### 2. Criação da Estrutura de Diretórios (Fase 1)

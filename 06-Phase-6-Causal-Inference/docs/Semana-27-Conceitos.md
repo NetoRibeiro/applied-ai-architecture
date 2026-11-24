@@ -171,7 +171,7 @@ Notebook resolvido e uma nota em `docs/`: para um produto com interação social
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_27_exercicio.ipynb) · [`semana_27_exercicio.ipynb`](../notebooks/semana_27_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_27_gabarito.ipynb) · [`semana_27_gabarito.ipynb`](../notebooks/semana_27_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_27_exercicio.ipynb) · [`semana_27_exercicio.ipynb`](../notebooks/semana_27_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_27_gabarito.ipynb) · [`semana_27_gabarito.ipynb`](../notebooks/semana_27_gabarito.ipynb) |
 
 [← Semana 26](/05-Phase-5-MLOps-and-Agents/docs/Semana-26-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 28 →](/06-Phase-6-Causal-Inference/docs/Semana-28-Conceitos.md)

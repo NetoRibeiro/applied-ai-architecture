@@ -884,12 +884,12 @@ export default function App() {
         <div className="mx-auto max-w-[1320px] px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <span>Enterprise AI Architect — Foundations · Trilha aberta de 32 semanas (Apache 2.0)</span>
           <a
-            href="https://github.com/NetoRibeiro/ai-architect-foundations"
+            href="https://github.com/NetoRibeiro/applied-ai-architecture"
             target="_blank"
             rel="noreferrer"
             className="text-slate-600 hover:text-[#0F172A] underline underline-offset-2"
           >
-            Repositório original no GitHub
+            Repositório no GitHub
           </a>
         </div>
       </footer>

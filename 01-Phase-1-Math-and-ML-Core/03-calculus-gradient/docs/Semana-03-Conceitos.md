@@ -168,7 +168,7 @@ Notebook resolvido e um gráfico de loss curves para pelo menos três learning r
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/notebooks/semana_03_exercicio.ipynb) · [`semana_03_exercicio.ipynb`](../notebooks/semana_03_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/notebooks/semana_03_gabarito.ipynb) · [`semana_03_gabarito.ipynb`](../notebooks/semana_03_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/notebooks/semana_03_exercicio.ipynb) · [`semana_03_exercicio.ipynb`](../notebooks/semana_03_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/notebooks/semana_03_gabarito.ipynb) · [`semana_03_gabarito.ipynb`](../notebooks/semana_03_gabarito.ipynb) |
 
 [← Semana 2](/01-Phase-1-Math-and-ML-Core/02-linear-algebra-numpy/docs/Semana-02-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 4 →](/01-Phase-1-Math-and-ML-Core/04-pytorch-tensors/docs/Semana-04-Conceitos.md)

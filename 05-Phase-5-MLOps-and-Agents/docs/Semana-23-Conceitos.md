@@ -180,7 +180,7 @@ Notebook resolvido e uma página em `docs/` com o capacity planning de um servi�
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_23_exercicio.ipynb) · [`semana_23_exercicio.ipynb`](../notebooks/semana_23_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_23_gabarito.ipynb) · [`semana_23_gabarito.ipynb`](../notebooks/semana_23_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_23_exercicio.ipynb) · [`semana_23_exercicio.ipynb`](../notebooks/semana_23_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_23_gabarito.ipynb) · [`semana_23_gabarito.ipynb`](../notebooks/semana_23_gabarito.ipynb) |
 
 [← Semana 22](/04-Phase-4-Fine-Tuning/docs/Semana-22-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 24 →](/05-Phase-5-MLOps-and-Agents/docs/Semana-24-Conceitos.md)

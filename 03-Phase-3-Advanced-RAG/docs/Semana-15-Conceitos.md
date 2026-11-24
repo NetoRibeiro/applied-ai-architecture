@@ -176,7 +176,7 @@ Notebook resolvido e, em `docs/`, uma tabela comparando três sistemas com inter
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_15_exercicio.ipynb) · [`semana_15_exercicio.ipynb`](../notebooks/semana_15_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_15_gabarito.ipynb) · [`semana_15_gabarito.ipynb`](../notebooks/semana_15_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_15_exercicio.ipynb) · [`semana_15_exercicio.ipynb`](../notebooks/semana_15_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_15_gabarito.ipynb) · [`semana_15_gabarito.ipynb`](../notebooks/semana_15_gabarito.ipynb) |
 
 [← Semana 14](/03-Phase-3-Advanced-RAG/docs/Semana-14-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 16 →](/03-Phase-3-Advanced-RAG/docs/Semana-16-Conceitos.md)

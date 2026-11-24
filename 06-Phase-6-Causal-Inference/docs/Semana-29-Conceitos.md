@@ -178,7 +178,7 @@ Notebook resolvido e uma nota em `docs/`: uma afirmação correlacional que voc�
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_29_exercicio.ipynb) · [`semana_29_exercicio.ipynb`](../notebooks/semana_29_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_29_gabarito.ipynb) · [`semana_29_gabarito.ipynb`](../notebooks/semana_29_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_29_exercicio.ipynb) · [`semana_29_exercicio.ipynb`](../notebooks/semana_29_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_29_gabarito.ipynb) · [`semana_29_gabarito.ipynb`](../notebooks/semana_29_gabarito.ipynb) |
 
 [← Semana 28](/06-Phase-6-Causal-Inference/docs/Semana-28-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 30 →](/06-Phase-6-Causal-Inference/docs/Semana-30-Conceitos.md)

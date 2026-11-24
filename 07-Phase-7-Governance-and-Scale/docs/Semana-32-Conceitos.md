@@ -198,7 +198,7 @@ Um sistema pequeno e completo, documentado como você documentaria no trabalho. 
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_32_exercicio.ipynb) · [`semana_32_exercicio.ipynb`](../notebooks/semana_32_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_32_gabarito.ipynb) · [`semana_32_gabarito.ipynb`](../notebooks/semana_32_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_32_exercicio.ipynb) · [`semana_32_exercicio.ipynb`](../notebooks/semana_32_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_32_gabarito.ipynb) · [`semana_32_gabarito.ipynb`](../notebooks/semana_32_gabarito.ipynb) |
 
 [← Semana 31](/07-Phase-7-Governance-and-Scale/docs/Semana-31-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md)

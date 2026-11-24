@@ -175,7 +175,7 @@ Notebook resolvido e um `MODEL_CARD.md` em `docs/` com a tabela comparativa (zer
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_21_exercicio.ipynb) · [`semana_21_exercicio.ipynb`](../notebooks/semana_21_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_21_gabarito.ipynb) · [`semana_21_gabarito.ipynb`](../notebooks/semana_21_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_21_exercicio.ipynb) · [`semana_21_exercicio.ipynb`](../notebooks/semana_21_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_21_gabarito.ipynb) · [`semana_21_gabarito.ipynb`](../notebooks/semana_21_gabarito.ipynb) |
 
 [← Semana 20](/04-Phase-4-Fine-Tuning/docs/Semana-20-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 22 →](/04-Phase-4-Fine-Tuning/docs/Semana-22-Conceitos.md)

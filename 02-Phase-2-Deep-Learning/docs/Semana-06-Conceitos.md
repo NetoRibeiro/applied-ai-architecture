@@ -144,7 +144,7 @@ Notebook resolvido e amostras geradas em três temperatures, com uma frase compa
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_06_exercicio.ipynb) · [`semana_06_exercicio.ipynb`](../notebooks/semana_06_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_06_gabarito.ipynb) · [`semana_06_gabarito.ipynb`](../notebooks/semana_06_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_06_exercicio.ipynb) · [`semana_06_exercicio.ipynb`](../notebooks/semana_06_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_06_gabarito.ipynb) · [`semana_06_gabarito.ipynb`](../notebooks/semana_06_gabarito.ipynb) |
 
 [← Semana 5](/02-Phase-2-Deep-Learning/docs/Semana-05-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 7 →](/02-Phase-2-Deep-Learning/docs/Semana-07-Conceitos.md)

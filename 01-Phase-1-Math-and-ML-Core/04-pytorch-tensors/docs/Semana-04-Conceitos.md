@@ -177,7 +177,7 @@ Você deve conseguir, sem consultar: escrever a fórmula de cosine similarity; e
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/04-pytorch-tensors/notebooks/semana_04_exercicio.ipynb) · [`semana_04_exercicio.ipynb`](../notebooks/semana_04_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/04-pytorch-tensors/notebooks/semana_04_gabarito.ipynb) · [`semana_04_gabarito.ipynb`](../notebooks/semana_04_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/04-pytorch-tensors/notebooks/semana_04_exercicio.ipynb) · [`semana_04_exercicio.ipynb`](../notebooks/semana_04_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/04-pytorch-tensors/notebooks/semana_04_gabarito.ipynb) · [`semana_04_gabarito.ipynb`](../notebooks/semana_04_gabarito.ipynb) |
 
 [← Semana 3](/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/docs/Semana-03-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 5 →](/02-Phase-2-Deep-Learning/docs/Semana-05-Conceitos.md)

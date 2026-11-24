@@ -16,8 +16,8 @@ BOOK = Path(__file__).resolve().parent
 REPO = BOOK.parent
 OUT = BOOK / "_output"
 ASSETS = BOOK / "assets"
-GITHUB = "https://github.com/NetoRibeiro/ai-architect-foundations/blob/main/"
-COLAB = "https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/"
+GITHUB = "https://github.com/NetoRibeiro/applied-ai-architecture/blob/main/"
+COLAB = "https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/"
 
 PHASE_DIR = "01-Phase-1-Math-and-ML-Core"
 WEEKS = {

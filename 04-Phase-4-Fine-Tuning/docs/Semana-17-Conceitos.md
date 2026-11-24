@@ -180,7 +180,7 @@ Notebook resolvido, os arquivos `train.jsonl`, `val.jsonl`, `test.jsonl` e um `D
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_17_exercicio.ipynb) · [`semana_17_exercicio.ipynb`](../notebooks/semana_17_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_17_gabarito.ipynb) · [`semana_17_gabarito.ipynb`](../notebooks/semana_17_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_17_exercicio.ipynb) · [`semana_17_exercicio.ipynb`](../notebooks/semana_17_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_17_gabarito.ipynb) · [`semana_17_gabarito.ipynb`](../notebooks/semana_17_gabarito.ipynb) |
 
 [← Semana 16](/03-Phase-3-Advanced-RAG/docs/Semana-16-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 18 →](/04-Phase-4-Fine-Tuning/docs/Semana-18-Conceitos.md)

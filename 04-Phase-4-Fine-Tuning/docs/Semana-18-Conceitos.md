@@ -159,7 +159,7 @@ Notebook resolvido e o gráfico accuracy × rank, com uma frase sobre o ponto de
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_18_exercicio.ipynb) · [`semana_18_exercicio.ipynb`](../notebooks/semana_18_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_18_gabarito.ipynb) · [`semana_18_gabarito.ipynb`](../notebooks/semana_18_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_18_exercicio.ipynb) · [`semana_18_exercicio.ipynb`](../notebooks/semana_18_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_18_gabarito.ipynb) · [`semana_18_gabarito.ipynb`](../notebooks/semana_18_gabarito.ipynb) |
 
 [← Semana 17](/04-Phase-4-Fine-Tuning/docs/Semana-17-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 19 →](/04-Phase-4-Fine-Tuning/docs/Semana-19-Conceitos.md)

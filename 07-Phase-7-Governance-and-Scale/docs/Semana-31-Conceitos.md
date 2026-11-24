@@ -180,7 +180,7 @@ Notebook resolvido; um ADR real em `docs/` (sugestão: a escolha do vector datab
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_31_exercicio.ipynb) · [`semana_31_exercicio.ipynb`](../notebooks/semana_31_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_31_gabarito.ipynb) · [`semana_31_gabarito.ipynb`](../notebooks/semana_31_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_31_exercicio.ipynb) · [`semana_31_exercicio.ipynb`](../notebooks/semana_31_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/07-Phase-7-Governance-and-Scale/notebooks/semana_31_gabarito.ipynb) · [`semana_31_gabarito.ipynb`](../notebooks/semana_31_gabarito.ipynb) |
 
 [← Semana 30](/06-Phase-6-Causal-Inference/docs/Semana-30-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 32 →](/07-Phase-7-Governance-and-Scale/docs/Semana-32-Conceitos.md)

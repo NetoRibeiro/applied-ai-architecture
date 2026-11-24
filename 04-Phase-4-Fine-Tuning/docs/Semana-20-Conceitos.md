@@ -166,7 +166,7 @@ Notebook resolvido e uma tabela em `docs/`: memória e accuracy da tarefa para b
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_20_exercicio.ipynb) · [`semana_20_exercicio.ipynb`](../notebooks/semana_20_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_20_gabarito.ipynb) · [`semana_20_gabarito.ipynb`](../notebooks/semana_20_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_20_exercicio.ipynb) · [`semana_20_exercicio.ipynb`](../notebooks/semana_20_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_20_gabarito.ipynb) · [`semana_20_gabarito.ipynb`](../notebooks/semana_20_gabarito.ipynb) |
 
 [← Semana 19](/04-Phase-4-Fine-Tuning/docs/Semana-19-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 21 →](/04-Phase-4-Fine-Tuning/docs/Semana-21-Conceitos.md)

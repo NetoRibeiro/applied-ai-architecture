@@ -167,7 +167,7 @@ Notebook resolvido e o gráfico recall × latency do HNSW com a sua escolha de `
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_11_exercicio.ipynb) · [`semana_11_exercicio.ipynb`](../notebooks/semana_11_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_11_gabarito.ipynb) · [`semana_11_gabarito.ipynb`](../notebooks/semana_11_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_11_exercicio.ipynb) · [`semana_11_exercicio.ipynb`](../notebooks/semana_11_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_11_gabarito.ipynb) · [`semana_11_gabarito.ipynb`](../notebooks/semana_11_gabarito.ipynb) |
 
 [← Semana 10](/02-Phase-2-Deep-Learning/docs/Semana-10-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 12 →](/03-Phase-3-Advanced-RAG/docs/Semana-12-Conceitos.md)

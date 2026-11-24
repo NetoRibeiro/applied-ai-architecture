@@ -16,7 +16,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = __dirname;
 const GITHUB_COLAB_BASE =
-  'https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/';
+  'https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/';
 
 const PHASES: PhaseInfo[] = [
   {

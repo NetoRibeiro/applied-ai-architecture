@@ -201,7 +201,7 @@ Você deve conseguir, sem consultar: definir TTFT e explicar continuous batching
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_26_exercicio.ipynb) · [`semana_26_exercicio.ipynb`](../notebooks/semana_26_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_26_gabarito.ipynb) · [`semana_26_gabarito.ipynb`](../notebooks/semana_26_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_26_exercicio.ipynb) · [`semana_26_exercicio.ipynb`](../notebooks/semana_26_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_26_gabarito.ipynb) · [`semana_26_gabarito.ipynb`](../notebooks/semana_26_gabarito.ipynb) |
 
 [← Semana 25](/05-Phase-5-MLOps-and-Agents/docs/Semana-25-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 27 →](/06-Phase-6-Causal-Inference/docs/Semana-27-Conceitos.md)

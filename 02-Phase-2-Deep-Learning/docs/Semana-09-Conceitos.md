@@ -190,7 +190,7 @@ Notebook resolvido e uma tabela em `docs/` com o mesmo prompt gerado em quatro c
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_09_exercicio.ipynb) · [`semana_09_exercicio.ipynb`](../notebooks/semana_09_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_09_gabarito.ipynb) · [`semana_09_gabarito.ipynb`](../notebooks/semana_09_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_09_exercicio.ipynb) · [`semana_09_exercicio.ipynb`](../notebooks/semana_09_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_09_gabarito.ipynb) · [`semana_09_gabarito.ipynb`](../notebooks/semana_09_gabarito.ipynb) |
 
 [← Semana 8](/02-Phase-2-Deep-Learning/docs/Semana-08-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 10 →](/02-Phase-2-Deep-Learning/docs/Semana-10-Conceitos.md)

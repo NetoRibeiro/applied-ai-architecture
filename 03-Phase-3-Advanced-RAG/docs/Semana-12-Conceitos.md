@@ -172,7 +172,7 @@ Notebook resolvido e uma decision table preenchida para um cenário real seu (ou
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_12_exercicio.ipynb) · [`semana_12_exercicio.ipynb`](../notebooks/semana_12_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_12_gabarito.ipynb) · [`semana_12_gabarito.ipynb`](../notebooks/semana_12_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_12_exercicio.ipynb) · [`semana_12_exercicio.ipynb`](../notebooks/semana_12_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/03-Phase-3-Advanced-RAG/notebooks/semana_12_gabarito.ipynb) · [`semana_12_gabarito.ipynb`](../notebooks/semana_12_gabarito.ipynb) |
 
 [← Semana 11](/03-Phase-3-Advanced-RAG/docs/Semana-11-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 13 →](/03-Phase-3-Advanced-RAG/docs/Semana-13-Conceitos.md)

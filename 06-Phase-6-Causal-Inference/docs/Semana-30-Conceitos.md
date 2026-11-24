@@ -170,7 +170,7 @@ Você deve conseguir, sem consultar: explicar por que a randomization identifica
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_30_exercicio.ipynb) · [`semana_30_exercicio.ipynb`](../notebooks/semana_30_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_30_gabarito.ipynb) · [`semana_30_gabarito.ipynb`](../notebooks/semana_30_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_30_exercicio.ipynb) · [`semana_30_exercicio.ipynb`](../notebooks/semana_30_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_30_gabarito.ipynb) · [`semana_30_gabarito.ipynb`](../notebooks/semana_30_gabarito.ipynb) |
 
 [← Semana 29](/06-Phase-6-Causal-Inference/docs/Semana-29-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 31 →](/07-Phase-7-Governance-and-Scale/docs/Semana-31-Conceitos.md)

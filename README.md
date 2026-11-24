@@ -8,7 +8,7 @@ Este projeto cumpre dois papéis simultâneos:
 
 > **English speakers:** this is a free, self-paced 32-week study track and interactive workbench from Data Science to Enterprise AI Architecture. Explanations are written in Portuguese, with technical terms, function names, and libraries kept in English. Notebooks run on Google Colab.
 
-[![Começar pela Semana 1](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/01-sklearn-pipelines/notebooks/semana_01_exercicio.ipynb)
+[![Começar pela Semana 1](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/01-sklearn-pipelines/notebooks/semana_01_exercicio.ipynb)
 
 ## Portfólio de Entregáveis & Decisões de Arquitetura
 
@@ -195,7 +195,7 @@ O projeto final, descrito na [leitura da Semana 32](07-Phase-7-Governance-and-Sc
 ## Estrutura do repositório
 
 ```
-ai-architect-foundations/
+applied-ai-architecture/
 ├── README.md                    # este guia
 ├── PLANO_DE_ESTUDO.md           # cronograma autoritativo das 32 semanas e 4 ciclos
 ├── LOGBOOK.md                   # registro cronológico de comandos e estudo
@@ -264,4 +264,4 @@ Distribuído sob a licença [Apache 2.0](LICENSE). Use, adapte, faça fork para 
 
 ---
 
-*Currículo base criado por Neto Ribeiro ([`NetoRibeiro/ai-architect-foundations`](https://github.com/NetoRibeiro/ai-architect-foundations) · [LinkedIn](https://www.linkedin.com/in/netoribeiro/)), expandido com o Workbench Web Interativo, LogBook de 6 passos e revisão da trilha em 4 ciclos para estudo aberto e portfólio aplicado.*
+*Currículo base criado por Neto Ribeiro ([`NetoRibeiro/applied-ai-architecture`](https://github.com/NetoRibeiro/applied-ai-architecture) · [LinkedIn](https://www.linkedin.com/in/netoribeiro/)), expandido com o Workbench Web Interativo, LogBook de 6 passos e revisão da trilha em 4 ciclos para estudo aberto e portfólio aplicado.*

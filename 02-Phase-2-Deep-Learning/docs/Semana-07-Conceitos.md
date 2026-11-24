@@ -149,7 +149,7 @@ Notebook resolvido e um attention heatmap comentado em `docs/`.
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_07_exercicio.ipynb) · [`semana_07_exercicio.ipynb`](../notebooks/semana_07_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_07_gabarito.ipynb) · [`semana_07_gabarito.ipynb`](../notebooks/semana_07_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_07_exercicio.ipynb) · [`semana_07_exercicio.ipynb`](../notebooks/semana_07_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_07_gabarito.ipynb) · [`semana_07_gabarito.ipynb`](../notebooks/semana_07_gabarito.ipynb) |
 
 [← Semana 6](/02-Phase-2-Deep-Learning/docs/Semana-06-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 8 →](/02-Phase-2-Deep-Learning/docs/Semana-08-Conceitos.md)

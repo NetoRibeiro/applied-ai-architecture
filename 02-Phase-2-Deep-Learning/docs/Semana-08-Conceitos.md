@@ -186,7 +186,7 @@ Notebook resolvido, a loss curve e uma amostra de texto do seu mini-GPT comparad
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_08_exercicio.ipynb) · [`semana_08_exercicio.ipynb`](../notebooks/semana_08_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_08_gabarito.ipynb) · [`semana_08_gabarito.ipynb`](../notebooks/semana_08_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_08_exercicio.ipynb) · [`semana_08_exercicio.ipynb`](../notebooks/semana_08_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_08_gabarito.ipynb) · [`semana_08_gabarito.ipynb`](../notebooks/semana_08_gabarito.ipynb) |
 
 [← Semana 7](/02-Phase-2-Deep-Learning/docs/Semana-07-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 9 →](/02-Phase-2-Deep-Learning/docs/Semana-09-Conceitos.md)

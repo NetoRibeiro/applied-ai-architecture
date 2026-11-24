@@ -184,7 +184,7 @@ Você deve conseguir, sem consultar: desenhar um Transformer block; explicar Q, 
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_10_exercicio.ipynb) · [`semana_10_exercicio.ipynb`](../notebooks/semana_10_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_10_gabarito.ipynb) · [`semana_10_gabarito.ipynb`](../notebooks/semana_10_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_10_exercicio.ipynb) · [`semana_10_exercicio.ipynb`](../notebooks/semana_10_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/02-Phase-2-Deep-Learning/notebooks/semana_10_gabarito.ipynb) · [`semana_10_gabarito.ipynb`](../notebooks/semana_10_gabarito.ipynb) |
 
 [← Semana 9](/02-Phase-2-Deep-Learning/docs/Semana-09-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 11 →](/03-Phase-3-Advanced-RAG/docs/Semana-11-Conceitos.md)

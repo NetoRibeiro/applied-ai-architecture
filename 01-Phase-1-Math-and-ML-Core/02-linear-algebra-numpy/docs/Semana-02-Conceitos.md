@@ -151,7 +151,7 @@ Notebook resolvido e uma nota curta em `docs/` explicando, com suas palavras, po
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/02-linear-algebra-numpy/notebooks/semana_02_exercicio.ipynb) · [`semana_02_exercicio.ipynb`](../notebooks/semana_02_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/01-Phase-1-Math-and-ML-Core/02-linear-algebra-numpy/notebooks/semana_02_gabarito.ipynb) · [`semana_02_gabarito.ipynb`](../notebooks/semana_02_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/02-linear-algebra-numpy/notebooks/semana_02_exercicio.ipynb) · [`semana_02_exercicio.ipynb`](../notebooks/semana_02_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/01-Phase-1-Math-and-ML-Core/02-linear-algebra-numpy/notebooks/semana_02_gabarito.ipynb) · [`semana_02_gabarito.ipynb`](../notebooks/semana_02_gabarito.ipynb) |
 
 [← Semana 1](/01-Phase-1-Math-and-ML-Core/01-sklearn-pipelines/docs/Semana-01-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 3 →](/01-Phase-1-Math-and-ML-Core/03-calculus-gradient/docs/Semana-03-Conceitos.md)

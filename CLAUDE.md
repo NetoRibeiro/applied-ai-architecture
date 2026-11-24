@@ -29,7 +29,7 @@ Layout differs by phase:
 
 Exercise and gabarito notebooks share the same cell sequence (same markdown, same setup cells, same "Passo N" steps); only the solution cells differ. When changing one, mirror the change in the other. Notebooks are committed **without outputs**.
 
-Each notebook starts with a markdown header: week title, phase name, "Notebook de exercícios" or "Gabarito", an "Abrir no Colab" badge, and a link to the week's concept reading. Colab badges point at `NetoRibeiro/ai-architect-foundations` on `main` — if a file is moved or renamed, update its badge URL, the links in `PLANO_DE_ESTUDO.md`, the phase `README.md`, and the root `README.md`.
+Each notebook starts with a markdown header: week title, phase name, "Notebook de exercícios" or "Gabarito", an "Abrir no Colab" badge, and a link to the week's concept reading. Colab badges point at `NetoRibeiro/applied-ai-architecture` on `main` — if a file is moved or renamed, update its badge URL, the links in `PLANO_DE_ESTUDO.md`, the phase `README.md`, and the root `README.md`.
 
 GPU notebooks carry `"accelerator": "GPU"` in notebook metadata. Models are swapped via a `MODELO` constant near the top of the notebook. All models are open and need no API key or license acceptance (Qwen2.5 0.5B/1.5B Instruct, distilgpt2, multilingual MiniLM, mMiniLM cross-encoder, mDeBERTa NLI, distilbert).
 

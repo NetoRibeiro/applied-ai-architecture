@@ -185,7 +185,7 @@ Notebook resolvido, o adapter salvo e uma tabela antes/depois (JSON válido, cat
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_19_exercicio.ipynb) · [`semana_19_exercicio.ipynb`](../notebooks/semana_19_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_19_gabarito.ipynb) · [`semana_19_gabarito.ipynb`](../notebooks/semana_19_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_19_exercicio.ipynb) · [`semana_19_exercicio.ipynb`](../notebooks/semana_19_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_19_gabarito.ipynb) · [`semana_19_gabarito.ipynb`](../notebooks/semana_19_gabarito.ipynb) |
 
 [← Semana 18](/04-Phase-4-Fine-Tuning/docs/Semana-18-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 20 →](/04-Phase-4-Fine-Tuning/docs/Semana-20-Conceitos.md)

@@ -174,7 +174,7 @@ Notebook resolvido e uma captura (ou tabela exportada) da comparação de runs e
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_24_exercicio.ipynb) · [`semana_24_exercicio.ipynb`](../notebooks/semana_24_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_24_gabarito.ipynb) · [`semana_24_gabarito.ipynb`](../notebooks/semana_24_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_24_exercicio.ipynb) · [`semana_24_exercicio.ipynb`](../notebooks/semana_24_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/05-Phase-5-MLOps-and-Agents/notebooks/semana_24_gabarito.ipynb) · [`semana_24_gabarito.ipynb`](../notebooks/semana_24_gabarito.ipynb) |
 
 [← Semana 23](/05-Phase-5-MLOps-and-Agents/docs/Semana-23-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 25 →](/05-Phase-5-MLOps-and-Agents/docs/Semana-25-Conceitos.md)

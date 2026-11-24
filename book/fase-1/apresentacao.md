@@ -43,4 +43,4 @@ Tente antes de olhar o gabarito: travar por vinte minutos em um exercício ensin
 
 Ao final da fase você deve conseguir, sem consultar: escrever a fórmula de cosine similarity, explicar o que `loss.backward()` faz e ler uma confusion matrix como custo de negócio. O capítulo da Semana 4 detalha esse checkpoint.
 
-O repositório completo, com todas as fases e notebooks, está em <https://github.com/NetoRibeiro/ai-architect-foundations>, sob a licença Apache 2.0.
+O repositório completo, com todas as fases e notebooks, está em <https://github.com/NetoRibeiro/applied-ai-architecture>, sob a licença Apache 2.0.

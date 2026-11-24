@@ -173,7 +173,7 @@ Você deve conseguir, sem consultar: escrever a fórmula do LoRA e contar seus p
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_22_exercicio.ipynb) · [`semana_22_exercicio.ipynb`](../notebooks/semana_22_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_22_gabarito.ipynb) · [`semana_22_gabarito.ipynb`](../notebooks/semana_22_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_22_exercicio.ipynb) · [`semana_22_exercicio.ipynb`](../notebooks/semana_22_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/04-Phase-4-Fine-Tuning/notebooks/semana_22_gabarito.ipynb) · [`semana_22_gabarito.ipynb`](../notebooks/semana_22_gabarito.ipynb) |
 
 [← Semana 21](/04-Phase-4-Fine-Tuning/docs/Semana-21-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 23 →](/05-Phase-5-MLOps-and-Agents/docs/Semana-23-Conceitos.md)

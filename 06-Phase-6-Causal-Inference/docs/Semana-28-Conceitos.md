@@ -174,7 +174,7 @@ Notebook resolvido e um parágrafo em `docs/`, escrito para um diretor: qual foi
 
 | Notebook | Abrir |
 |---|---|
-| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_28_exercicio.ipynb) · [`semana_28_exercicio.ipynb`](../notebooks/semana_28_exercicio.ipynb) |
-| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/ai-architect-foundations/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_28_gabarito.ipynb) · [`semana_28_gabarito.ipynb`](../notebooks/semana_28_gabarito.ipynb) |
+| Exercícios | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_28_exercicio.ipynb) · [`semana_28_exercicio.ipynb`](../notebooks/semana_28_exercicio.ipynb) |
+| Gabarito | [![Abrir no Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/NetoRibeiro/applied-ai-architecture/blob/main/06-Phase-6-Causal-Inference/notebooks/semana_28_gabarito.ipynb) · [`semana_28_gabarito.ipynb`](../notebooks/semana_28_gabarito.ipynb) |
 
 [← Semana 27](/06-Phase-6-Causal-Inference/docs/Semana-27-Conceitos.md) · [Plano de Estudo](/PLANO_DE_ESTUDO.md) · [Semana 29 →](/06-Phase-6-Causal-Inference/docs/Semana-29-Conceitos.md)
