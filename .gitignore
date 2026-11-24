@@ -228,4 +228,5 @@ node_modules/
 # Configuração local do Firebase (versione apenas os arquivos *.example.*)
 firebase-applet-config.json
 firestore.rules
+public/assets/aistudio/
 

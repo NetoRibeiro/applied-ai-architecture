@@ -176,7 +176,7 @@ export default function AccessControlView({
             fica fora do repositório Git, é necessário informar as credenciais públicas do seu Firebase nas variáveis de ambiente do EasyPanel:
           </p>
           <pre className="text-xs font-mono bg-[#0F172A] text-slate-100 p-4 rounded-lg overflow-x-auto">
-            <code>{`VITE_ADMIN_EMAIL=dsjuvencio@gmail.com
+            <code>{`VITE_ADMIN_EMAIL=seu-email-admin@exemplo.com
 FIREBASE_CONFIG_JSON={"projectId":"...","appId":"...","apiKey":"...","authDomain":"...","firestoreDatabaseId":"(default)"}`}</code>
           </pre>
           <p className="text-xs text-amber-900">
