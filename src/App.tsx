@@ -842,6 +842,14 @@ export default function App() {
                   setView('logbook');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
+                onOpenCurriculum={() => {
+                  setView('curriculum');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onOpenGovernance={() => {
+                  setView('governance');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 onSignIn={handleSignIn}
                 onOpenAccess={() => setView('access')}
               />

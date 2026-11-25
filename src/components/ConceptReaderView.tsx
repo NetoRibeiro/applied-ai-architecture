@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { User } from 'firebase/auth';
-import ReactMarkdown from 'react-markdown';
+import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
   ArrowRight,
@@ -118,6 +118,8 @@ interface ConceptReaderViewProps {
   onUpdateLogEntry: (id: string, entry: Omit<LogbookEntry, 'id'>) => Promise<void> | void;
   onDeleteLogEntry: (id: string) => void;
   onOpenLogbook: (subTab?: 'steps' | 'journal') => void;
+  onOpenCurriculum: () => void;
+  onOpenGovernance: () => void;
   onSignIn: () => Promise<void>;
   onOpenAccess: () => void;
 }
@@ -141,6 +143,8 @@ export default function ConceptReaderView({
   onUpdateLogEntry,
   onDeleteLogEntry,
   onOpenLogbook,
+  onOpenCurriculum,
+  onOpenGovernance,
   onSignIn,
   onOpenAccess,
 }: ConceptReaderViewProps) {
@@ -277,6 +281,85 @@ export default function ConceptReaderView({
       // clipboard unavailable
     }
   };
+
+  const markdownComponents: Components = useMemo(
+    () => ({
+      a: ({ href, children, ...props }) => {
+        const targetHref = href ?? '';
+
+        const nbMatch = targetHref.match(/semana_(\d+)_(exercicio|gabarito)\.ipynb$/i);
+        if (nbMatch && !targetHref.startsWith('http')) {
+          const nbWeek = Number(nbMatch[1]);
+          const isGabarito = nbMatch[2].toLowerCase() === 'gabarito';
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                if (nbWeek !== selectedWeek) {
+                  onSelectWeek(nbWeek);
+                }
+                setTab('notebook');
+                setRevealAll(isGabarito);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-[#0284C7] hover:text-[#0369A1] underline underline-offset-2 font-medium cursor-pointer"
+            >
+              {children}
+            </button>
+          );
+        }
+
+        const weekDocMatch = targetHref.match(/Semana-(\d+)-Conceitos\.md$/i);
+        if (weekDocMatch && !targetHref.startsWith('http')) {
+          const nextWeek = Number(weekDocMatch[1]);
+          return (
+            <button
+              type="button"
+              onClick={() => {
+                onSelectWeek(nextWeek);
+                setTab('concept');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="text-[#0284C7] hover:text-[#0369A1] underline underline-offset-2 font-medium cursor-pointer"
+            >
+              {children}
+            </button>
+          );
+        }
+
+        if (targetHref === '/PLANO_DE_ESTUDO.md') {
+          return (
+            <button
+              type="button"
+              onClick={() => onOpenCurriculum()}
+              className="text-[#0284C7] hover:text-[#0369A1] underline underline-offset-2 font-medium cursor-pointer"
+            >
+              {children}
+            </button>
+          );
+        }
+
+        if (targetHref.includes('templates/')) {
+          return (
+            <button
+              type="button"
+              onClick={() => onOpenGovernance()}
+              className="text-[#0284C7] hover:text-[#0369A1] underline underline-offset-2 font-medium cursor-pointer"
+            >
+              {children}
+            </button>
+          );
+        }
+
+        return (
+          <a href={targetHref} target="_blank" rel="noreferrer" {...props}>
+            {children}
+          </a>
+        );
+      },
+    }),
+    [selectedWeek, onSelectWeek, onOpenCurriculum, onOpenGovernance],
+  );
 
   return (
     <div className="mx-auto max-w-[1320px] px-6 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -481,7 +564,7 @@ export default function ConceptReaderView({
             {tab === 'concept' && parsedConcept && (
               <article className="bg-white border border-slate-200 rounded-xl p-6 sm:p-10 space-y-8">
                 <div className="reading-prose mx-auto">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                     {parsedConcept.before}
                   </ReactMarkdown>
                 </div>
@@ -700,7 +783,7 @@ export default function ConceptReaderView({
 
                 {parsedConcept.after && (
                   <div className="reading-prose mx-auto">
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                       {parsedConcept.after}
                     </ReactMarkdown>
                   </div>
@@ -744,7 +827,7 @@ export default function ConceptReaderView({
                         className="bg-white border border-slate-200 rounded-xl px-6 py-5"
                       >
                         <div className="reading-prose max-w-none text-sm">
-                          <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                             {exCell.source}
                           </ReactMarkdown>
                         </div>
