@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { User } from 'firebase/auth';
 import {
   BookOpen,
@@ -61,6 +61,7 @@ interface LogbookViewProps {
   weeks: WeekMeta[];
   weekLogs: Record<number, WeekLogState>;
   logEntries: LogbookEntry[];
+  initialSubTab?: 'steps' | 'journal';
   firebaseConfigured: boolean;
   user: User | null;
   profile: UserProfile | null;
@@ -83,6 +84,7 @@ export default function LogbookView({
   weeks,
   weekLogs,
   logEntries,
+  initialSubTab = 'steps',
   firebaseConfigured,
   user,
   profile,
@@ -98,7 +100,12 @@ export default function LogbookView({
   onDeleteLogEntry,
   onOpenWeek,
 }: LogbookViewProps) {
-  const [subTab, setSubTab] = useState<'steps' | 'journal'>('steps');
+  const [subTab, setSubTab] = useState<'steps' | 'journal'>(initialSubTab);
+
+  useEffect(() => {
+    setSubTab(initialSubTab);
+  }, [initialSubTab]);
+
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [cycleFilter, setCycleFilter] = useState<string>('all');
   const [expandedWeek, setExpandedWeek] = useState<number | null>(1);
@@ -669,6 +676,27 @@ export default function LogbookView({
                         />
                       </div>
                     </div>
+
+                    {(() => {
+                      const selfCheckCount = logEntries.filter(
+                        (e) => e.week === week.week && e.title.startsWith('Autoavaliação'),
+                      ).length;
+                      if (selfCheckCount === 0) return null;
+                      return (
+                        <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-3 text-xs text-slate-600 tabular-nums">
+                          <span>
+                            Autoavaliação: {selfCheckCount} resposta(s) salva(s) no Diário Cronológico
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setSubTab('journal')}
+                            className="font-medium text-[#14213D] hover:underline underline-offset-2 cursor-pointer"
+                          >
+                            Ver respostas no Diário
+                          </button>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
               </div>

@@ -30,6 +30,7 @@ import {
   signInWithGoogle,
   signInWithGoogleRedirect,
   signOutUser,
+  updateLogEntry,
   upsertWeekLog,
 } from './firebase';
 import type {
@@ -92,6 +93,7 @@ export default function App() {
 
   const [selectedWeek, setSelectedWeek] = useState(1);
   const [readerTab, setReaderTab] = useState<'concept' | 'notebook'>('concept');
+  const [logbookSubTab, setLogbookSubTab] = useState<'steps' | 'journal'>('steps');
   const [activeLabId, setActiveLabId] = useState('threshold-cost');
 
   // Local guest state (also used as migration source if local progress exists)
@@ -483,15 +485,25 @@ export default function App() {
     }
   };
 
-  const addLogEntry = (entry: Omit<LogbookEntry, 'id'>) => {
+  const addLogEntry = async (entry: Omit<LogbookEntry, 'id'>) => {
     if (canPersistToCloud && user) {
-      void createLogEntry(user.uid, entry);
+      await createLogEntry(user.uid, entry);
       return;
     }
     setLocalLogEntries((prev) => [
       { ...entry, id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}` },
       ...prev,
     ]);
+  };
+
+  const updateLogEntryItem = async (id: string, entry: Omit<LogbookEntry, 'id'>) => {
+    if (canPersistToCloud && user) {
+      await updateLogEntry(user.uid, id, entry);
+      return;
+    }
+    setLocalLogEntries((prev) =>
+      prev.map((item) => (item.id === id ? { ...entry, id } : item)),
+    );
   };
 
   const deleteLogEntry = (id: string) => {
@@ -814,10 +826,24 @@ export default function App() {
                 initialTab={readerTab}
                 completedWeeks={completedWeeks}
                 weekLogs={weekLogs}
+                logEntries={logEntries}
+                firebaseConfigured={firebaseReady}
+                user={user}
+                canPersistToCloud={canPersistToCloud}
                 onSelectWeek={(w) => setSelectedWeek(w)}
                 onToggleComplete={toggleCompleteWeek}
                 onToggleStep={toggleStep}
                 onOpenLab={openLab}
+                onAddLogEntry={addLogEntry}
+                onUpdateLogEntry={updateLogEntryItem}
+                onDeleteLogEntry={deleteLogEntry}
+                onOpenLogbook={(subTab) => {
+                  setLogbookSubTab(subTab ?? 'steps');
+                  setView('logbook');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onSignIn={handleSignIn}
+                onOpenAccess={() => setView('access')}
               />
             )}
 
@@ -834,6 +860,7 @@ export default function App() {
                 weeks={weeks}
                 weekLogs={weekLogs}
                 logEntries={logEntries}
+                initialSubTab={logbookSubTab}
                 firebaseConfigured={firebaseReady}
                 user={user}
                 profile={profile}

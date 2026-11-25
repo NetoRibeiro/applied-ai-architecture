@@ -449,6 +449,36 @@ export async function createLogEntry(
   }
 }
 
+export async function updateLogEntry(
+  uid: string,
+  entryId: string,
+  entry: Omit<LogbookEntry, 'id'>,
+): Promise<void> {
+  const firestore = getReadyDb();
+  const docPath = `users/${uid}/logEntries/${entryId}`;
+  const ref = doc(firestore, 'users', uid, 'logEntries', entryId);
+
+  const payload: Record<string, unknown> = {
+    date: entry.date.slice(0, 32),
+    week: Math.trunc(entry.week),
+    title: entry.title.trim().slice(0, 200),
+    hours: Math.max(0, Math.min(100, Number(entry.hours) || 0)),
+    notes: entry.notes.trim().slice(0, 10000),
+    blockers: (entry.blockers || '').trim().slice(0, 3000),
+    updatedAt: serverTimestamp(),
+  };
+
+  if (entry.commandSnippet && entry.commandSnippet.trim().length > 0) {
+    payload.commandSnippet = entry.commandSnippet.trim().slice(0, 4000);
+  }
+
+  try {
+    await updateDoc(ref, payload);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, docPath);
+  }
+}
+
 export async function removeLogEntry(uid: string, entryId: string): Promise<void> {
   const firestore = getReadyDb();
   const docPath = `users/${uid}/logEntries/${entryId}`;

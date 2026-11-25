@@ -1,7 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import type { User } from 'firebase/auth';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import {
+  ArrowRight,
+  BookOpen,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -10,9 +13,91 @@ import {
   Eye,
   EyeOff,
   FlaskConical,
+  LogIn,
+  PenLine,
+  Trash2,
 } from 'lucide-react';
 import { WEEKLY_STEPS, countCompletedSteps, createEmptyWeekLog } from './LogbookView';
-import type { PhaseInfo, WeekDetail, WeekLogState, WeekMeta, WeeklyStepId } from '../types';
+import type {
+  LogbookEntry,
+  PhaseInfo,
+  WeekDetail,
+  WeekLogState,
+  WeekMeta,
+  WeeklyStepId,
+} from '../types';
+
+interface SelfCheckQuestion {
+  number: number;
+  text: string;
+}
+
+function getTodayLocalIsoDate(): string {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function splitConceptSelfCheck(markdown: string): {
+  before: string;
+  questions: SelfCheckQuestion[];
+  after: string;
+} {
+  const headingMatch = markdown.match(/^##\s+Perguntas de autoavaliação\s*$/im);
+  if (!headingMatch || headingMatch.index === undefined) {
+    return { before: markdown, questions: [], after: '' };
+  }
+
+  const sectionStart = headingMatch.index;
+  const contentStart = sectionStart + headingMatch[0].length;
+  const rest = markdown.slice(contentStart);
+  const nextHeadingMatch = rest.match(/\n##\s+/);
+  const sectionBody =
+    nextHeadingMatch && nextHeadingMatch.index !== undefined
+      ? rest.slice(0, nextHeadingMatch.index)
+      : rest;
+  const after =
+    nextHeadingMatch && nextHeadingMatch.index !== undefined
+      ? rest.slice(nextHeadingMatch.index + 1)
+      : '';
+
+  const questions: SelfCheckQuestion[] = [];
+  for (const rawLine of sectionBody.split('\n')) {
+    const lineMatch = rawLine.trim().match(/^(\d+)\.\s+(.+)$/);
+    if (lineMatch) {
+      questions.push({
+        number: Number(lineMatch[1]),
+        text: lineMatch[2].trim(),
+      });
+    }
+  }
+
+  if (questions.length === 0) {
+    return { before: markdown, questions: [], after: '' };
+  }
+
+  return {
+    before: markdown.slice(0, sectionStart).trimEnd(),
+    questions,
+    after: after.trimStart(),
+  };
+}
+
+function extractSavedAnswer(notes: string): string {
+  const marker = '\n\nResposta:\n';
+  const idx = notes.indexOf(marker);
+  if (idx >= 0) {
+    return notes.slice(idx + marker.length).trim();
+  }
+  const altMarker = '\n\nResposta:';
+  const altIdx = notes.indexOf(altMarker);
+  if (altIdx >= 0) {
+    return notes.slice(altIdx + altMarker.length).trim();
+  }
+  return notes.trim();
+}
 
 interface ConceptReaderViewProps {
   phases: PhaseInfo[];
@@ -21,10 +106,20 @@ interface ConceptReaderViewProps {
   initialTab: 'concept' | 'notebook';
   completedWeeks: number[];
   weekLogs: Record<number, WeekLogState>;
+  logEntries: LogbookEntry[];
+  firebaseConfigured: boolean;
+  user: User | null;
+  canPersistToCloud: boolean;
   onSelectWeek: (week: number) => void;
   onToggleComplete: (week: number) => void;
   onToggleStep: (week: number, step: WeeklyStepId) => void;
   onOpenLab: (labId: string) => void;
+  onAddLogEntry: (entry: Omit<LogbookEntry, 'id'>) => Promise<void> | void;
+  onUpdateLogEntry: (id: string, entry: Omit<LogbookEntry, 'id'>) => Promise<void> | void;
+  onDeleteLogEntry: (id: string) => void;
+  onOpenLogbook: (subTab?: 'steps' | 'journal') => void;
+  onSignIn: () => Promise<void>;
+  onOpenAccess: () => void;
 }
 
 export default function ConceptReaderView({
@@ -34,10 +129,20 @@ export default function ConceptReaderView({
   initialTab,
   completedWeeks,
   weekLogs,
+  logEntries,
+  firebaseConfigured,
+  user,
+  canPersistToCloud,
   onSelectWeek,
   onToggleComplete,
   onToggleStep,
   onOpenLab,
+  onAddLogEntry,
+  onUpdateLogEntry,
+  onDeleteLogEntry,
+  onOpenLogbook,
+  onSignIn,
+  onOpenAccess,
 }: ConceptReaderViewProps) {
   const [tab, setTab] = useState<'concept' | 'notebook'>(initialTab);
   const [detail, setDetail] = useState<WeekDetail | null>(null);
@@ -46,6 +151,10 @@ export default function ConceptReaderView({
   const [revealedCells, setRevealedCells] = useState<Record<number, boolean>>({});
   const [revealAll, setRevealAll] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  const [editingQuestion, setEditingQuestion] = useState<number | null>(null);
+  const [draftAnswer, setDraftAnswer] = useState('');
+  const [savingQuestion, setSavingQuestion] = useState<number | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<string | null>(null);
 
   useEffect(() => {
     setTab(initialTab);
@@ -57,6 +166,9 @@ export default function ConceptReaderView({
     setError(null);
     setRevealedCells({});
     setRevealAll(false);
+    setEditingQuestion(null);
+    setDraftAnswer('');
+    setSaveFeedback(null);
 
     fetch(`/api/week/${selectedWeek}`)
       .then(async (res) => {
@@ -85,6 +197,76 @@ export default function ConceptReaderView({
   const isCompleted = completedSet.has(selectedWeek);
   const currentLog = weekLogs[selectedWeek] ?? createEmptyWeekLog();
   const doneSteps = countCompletedSteps(currentLog);
+
+  const parsedConcept = useMemo(
+    () => (detail ? splitConceptSelfCheck(detail.conceptMarkdown) : null),
+    [detail],
+  );
+
+  const getEntryForQuestion = (weekNumber: number, questionNumber: number): LogbookEntry | undefined => {
+    const weekStr = String(weekNumber).padStart(2, '0');
+    const suffix = `Semana ${weekStr} · Pergunta ${questionNumber}`;
+    return logEntries.find(
+      (entry) =>
+        entry.week === weekNumber &&
+        entry.title.startsWith('Autoavaliação') &&
+        entry.title.endsWith(suffix),
+    );
+  };
+
+  const handleOpenAnswerBox = (question: SelfCheckQuestion) => {
+    if (!detail) return;
+    const existing = getEntryForQuestion(detail.week, question.number);
+    setEditingQuestion(question.number);
+    setDraftAnswer(existing ? extractSavedAnswer(existing.notes) : '');
+    setSaveFeedback(null);
+  };
+
+  const handleSaveQuestionAnswer = async (question: SelfCheckQuestion) => {
+    if (!detail) return;
+    const trimmed = draftAnswer.trim();
+    if (!trimmed) return;
+
+    const existing = getEntryForQuestion(detail.week, question.number);
+    const today = getTodayLocalIsoDate();
+    const weekStr = String(detail.week).padStart(2, '0');
+    const payload: Omit<LogbookEntry, 'id'> = {
+      date: today,
+      week: detail.week,
+      title: `Autoavaliação · Fase ${detail.phase} · Semana ${weekStr} · Pergunta ${question.number}`,
+      hours: existing ? existing.hours : 0,
+      notes: `Pergunta ${question.number}: ${question.text}\n\nResposta:\n${trimmed}`,
+      blockers: existing?.blockers ?? '',
+      commandSnippet: existing?.commandSnippet,
+    };
+
+    setSavingQuestion(question.number);
+    setSaveFeedback(null);
+    try {
+      if (existing) {
+        await onUpdateLogEntry(existing.id, payload);
+      } else {
+        await onAddLogEntry(payload);
+      }
+
+      if (parsedConcept) {
+        const answeredAfterSave = parsedConcept.questions.filter(
+          (q) => q.number === question.number || Boolean(getEntryForQuestion(detail.week, q.number)),
+        ).length;
+        if (answeredAfterSave >= parsedConcept.questions.length && !currentLog.steps.self_check) {
+          onToggleStep(detail.week, 'self_check');
+        }
+      }
+
+      setEditingQuestion(null);
+      setDraftAnswer('');
+      setSaveFeedback(
+        `Pergunta ${question.number} salva no LogBook (${today} · Fase ${detail.phase} · Semana ${weekStr}).`,
+      );
+    } finally {
+      setSavingQuestion(null);
+    }
+  };
 
   const handleCopy = async (key: string, text: string) => {
     try {
@@ -296,13 +478,233 @@ export default function ConceptReaderView({
             </div>
 
             {/* Concept Reading Tab */}
-            {tab === 'concept' && (
-              <article className="bg-white border border-slate-200 rounded-xl p-6 sm:p-10">
+            {tab === 'concept' && parsedConcept && (
+              <article className="bg-white border border-slate-200 rounded-xl p-6 sm:p-10 space-y-8">
                 <div className="reading-prose mx-auto">
                   <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {detail.conceptMarkdown}
+                    {parsedConcept.before}
                   </ReactMarkdown>
                 </div>
+
+                {parsedConcept.questions.length > 0 && (
+                  <section
+                    aria-label="Perguntas de autoavaliação"
+                    className="mx-auto max-w-[70ch] border-t border-slate-200 pt-8 space-y-5"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="space-y-1">
+                        <h2 className="text-xl font-semibold text-[#14213D] tracking-tight">
+                          Perguntas de autoavaliação
+                        </h2>
+                        <p className="text-xs text-slate-500 tabular-nums">
+                          Fase {detail.phase} · Semana {String(detail.week).padStart(2, '0')} ·{' '}
+                          {
+                            parsedConcept.questions.filter((q) =>
+                              Boolean(getEntryForQuestion(detail.week, q.number)),
+                            ).length
+                          }
+                          /{parsedConcept.questions.length} respondidas no LogBook
+                        </p>
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => onOpenLogbook('journal')}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                      >
+                        <BookOpen className="w-3.5 h-3.5" />
+                        <span>Abrir no LogBook</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+
+                    {firebaseConfigured && !canPersistToCloud && (
+                      <div className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                        <span>
+                          {!user
+                            ? 'Suas respostas ficam salvas neste navegador e serão vinculadas ao seu LogBook. Entre com Google para salvar na nuvem.'
+                            : 'Sua conta ainda aguarda liberação para gravação em nuvem; por enquanto as respostas ficam salvas localmente.'}
+                        </span>
+                        {!user ? (
+                          <button
+                            type="button"
+                            onClick={() => void onSignIn()}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 font-medium text-white bg-[#14213D] hover:bg-[#1E3158] rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                          >
+                            <LogIn className="w-3.5 h-3.5" />
+                            <span>Entrar com Google</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={onOpenAccess}
+                            className="px-3 py-1.5 font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                          >
+                            Ver Acesso
+                          </button>
+                        )}
+                      </div>
+                    )}
+
+                    {saveFeedback && (
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5 text-xs text-emerald-900 flex items-center justify-between gap-3">
+                        <span className="flex items-center gap-2">
+                          <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                          <span>{saveFeedback}</span>
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => onOpenLogbook('journal')}
+                          className="font-medium underline underline-offset-2 hover:text-emerald-950 whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          Ver no LogBook
+                        </button>
+                      </div>
+                    )}
+
+                    <div className="border border-slate-200 rounded-xl divide-y divide-slate-200 bg-white overflow-hidden">
+                      {parsedConcept.questions.map((question) => {
+                        const savedEntry = getEntryForQuestion(detail.week, question.number);
+                        const savedText = savedEntry ? extractSavedAnswer(savedEntry.notes) : '';
+                        const isEditing = editingQuestion === question.number;
+                        const isSaving = savingQuestion === question.number;
+                        const today = getTodayLocalIsoDate();
+                        const weekStr = String(detail.week).padStart(2, '0');
+
+                        return (
+                          <div key={question.number} className="p-4 sm:p-5 space-y-3">
+                            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                              <div className="flex items-start gap-2.5 min-w-0">
+                                <span className="font-mono text-xs font-semibold text-[#14213D] tabular-nums pt-0.5 shrink-0">
+                                  {String(question.number).padStart(2, '0')}.
+                                </span>
+                                <div className="text-sm font-medium text-[#0F172A] leading-relaxed [&_code]:font-mono [&_code]:text-[0.85em] [&_code]:bg-slate-100 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded">
+                                  <ReactMarkdown
+                                    remarkPlugins={[remarkGfm]}
+                                    components={{ p: ({ children }) => <span>{children}</span> }}
+                                  >
+                                    {question.text}
+                                  </ReactMarkdown>
+                                </div>
+                              </div>
+
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (isEditing) {
+                                    setEditingQuestion(null);
+                                    setDraftAnswer('');
+                                  } else {
+                                    handleOpenAnswerBox(question);
+                                  }
+                                }}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-md transition-colors whitespace-nowrap shrink-0 self-start cursor-pointer"
+                              >
+                                <PenLine className="w-3.5 h-3.5" />
+                                <span>
+                                  {isEditing
+                                    ? 'Cancelar'
+                                    : savedEntry
+                                      ? 'Editar resposta'
+                                      : 'Responder'}
+                                </span>
+                              </button>
+                            </div>
+
+                            {isEditing && (
+                              <div className="pl-6 space-y-2.5">
+                                <input
+                                  type="text"
+                                  autoFocus
+                                  value={draftAnswer}
+                                  onChange={(e) => setDraftAnswer(e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && draftAnswer.trim() && !isSaving) {
+                                      e.preventDefault();
+                                      void handleSaveQuestionAnswer(question);
+                                    }
+                                    if (e.key === 'Escape') {
+                                      setEditingQuestion(null);
+                                      setDraftAnswer('');
+                                    }
+                                  }}
+                                  placeholder="Digite sua resposta aqui e pressione Enter ou clique em Salvar..."
+                                  className="w-full px-3.5 py-2 text-sm text-[#0F172A] bg-white border border-slate-300 focus:border-[#14213D] focus:outline-none rounded-lg"
+                                />
+                                <div className="flex flex-wrap items-center justify-between gap-2">
+                                  <span className="text-xs text-slate-500 tabular-nums">
+                                    Rastreio: {today} · Fase {detail.phase} · Semana {weekStr} ·
+                                    Pergunta {question.number}
+                                  </span>
+                                  <div className="flex items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setEditingQuestion(null);
+                                        setDraftAnswer('');
+                                      }}
+                                      className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-[#0F172A] cursor-pointer"
+                                    >
+                                      Cancelar
+                                    </button>
+                                    <button
+                                      type="button"
+                                      disabled={!draftAnswer.trim() || isSaving}
+                                      onClick={() => void handleSaveQuestionAnswer(question)}
+                                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-[#14213D] hover:bg-[#1E3158] disabled:opacity-50 rounded-md transition-colors cursor-pointer"
+                                    >
+                                      <Check className="w-3.5 h-3.5" />
+                                      <span>{isSaving ? 'Salvando...' : 'Salvar no LogBook'}</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+
+                            {!isEditing && savedEntry && (
+                              <div className="ml-6 bg-[#F8FAFC] border border-slate-200 rounded-lg px-4 py-3 space-y-1.5">
+                                <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 tabular-nums">
+                                  <span>
+                                    LogBook · {savedEntry.date} · Fase {detail.phase} · Semana{' '}
+                                    {weekStr} · Pergunta {question.number}
+                                  </span>
+                                  <div className="flex items-center gap-3">
+                                    <button
+                                      type="button"
+                                      onClick={() => onOpenLogbook('journal')}
+                                      className="text-[#14213D] hover:underline underline-offset-2 font-medium cursor-pointer"
+                                    >
+                                      Ver no LogBook
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => onDeleteLogEntry(savedEntry.id)}
+                                      aria-label={`Remover resposta da pergunta ${question.number}`}
+                                      className="text-slate-400 hover:text-red-600 cursor-pointer"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                </div>
+                                <p className="text-sm text-[#0F172A] leading-relaxed whitespace-pre-line">
+                                  {savedText}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </section>
+                )}
+
+                {parsedConcept.after && (
+                  <div className="reading-prose mx-auto">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {parsedConcept.after}
+                    </ReactMarkdown>
+                  </div>
+                )}
               </article>
             )}
 
