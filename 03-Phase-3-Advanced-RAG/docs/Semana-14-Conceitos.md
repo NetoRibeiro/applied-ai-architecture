@@ -155,6 +155,10 @@ Quando há dados de interação (cliques, compras), treina-se um ranker com feat
 5. O que os parâmetros `k₁` e `b` do BM25 controlam?
 6. O router de domínio erra 10% das vezes. Que mecanismos você colocaria para limitar o dano?
 
+## Perguntas do entrevistador
+
+1. Usuários estão buscando por códigos exatos de erro e SKUs no RAG e a busca puramente densa retorna documentos conceitualmente parecidos, mas errados. Como você arquiteta um funil híbrido (BM25 + dense retrieval + RRF + cross-encoder reranker) mantendo a latência dentro do SLA?
+
 ## Entregável da semana
 
 Notebook resolvido e um diagrama (Mermaid ou imagem) do funil com a latência medida em cada stage, em `docs/`.

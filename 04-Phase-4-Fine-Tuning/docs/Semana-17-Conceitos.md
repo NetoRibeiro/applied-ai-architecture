@@ -170,6 +170,10 @@ Dataset é código: versione (DVC, Hugging Face Datasets com revisions, Delta La
 5. Por que a serialização do target JSON precisa ser consistente?
 6. Quais os cuidados ao usar synthetic data gerado por um teacher model?
 
+## Perguntas do entrevistador
+
+1. Seu time coletou 100 mil logs reais de atendimento para fazer fine-tuning, mas o modelo ajustado piorou em relação ao modelo base. Como você audita qualidade, deduplicação, balanceamento de instruções e vazamento treino/teste nesse dataset JSONL antes de iniciar o treino?
+
 ## Entregável da semana
 
 Notebook resolvido, os arquivos `train.jsonl`, `val.jsonl`, `test.jsonl` e um `DATASET_CARD.md` curto.

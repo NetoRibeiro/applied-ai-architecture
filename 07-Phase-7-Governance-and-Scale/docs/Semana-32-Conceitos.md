@@ -158,6 +158,10 @@ Um OEC perfeito que nunca atinge significância é inútil. Técnicas: variance 
 5. Qual a hipótese por trás de um surrogate index e como ela pode falhar?
 6. Por que um mau OEC causa dano mesmo que todos os experimentos sejam analisados corretamente?
 
+## Perguntas do entrevistador
+
+1. Em uma busca com IA, um experimento aumentou o número de cliques e o tempo de sessão dos usuários, e o time quer aprovar a mudança. Por que essa métrica pode estar escondendo piora na experiência, e como você define um OEC (Overall Evaluation Criterion) combinado com guardrail metrics para decisões executivas?
+
 ## Entregável da semana
 
 Notebook resolvido e um memorando de uma página para a diretoria: "Por que deixaremos de decidir experimentos por cliques", com os números da simulação adaptados ao seu contexto.

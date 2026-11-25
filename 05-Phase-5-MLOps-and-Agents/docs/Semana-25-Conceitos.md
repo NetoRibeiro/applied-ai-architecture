@@ -166,6 +166,10 @@ Traces de produção → amostragem e revisão de erros (error analysis) → nov
 5. O que significa limitar o blast radius e por que isso é mais confiável que detectar ataques?
 6. Qual a diferença entre data drift, concept drift e model drift?
 
+## Perguntas do entrevistador
+
+1. Um agente com permissão de leitura de e-mails sofreu indirect prompt injection vinda de uma mensagem externa e tentou exfiltrar dados usando outra tool. Por que guardrails de entrada sozinhos não bastam e como você combina tracing distribuído, least privilege e controle de blast radius?
+
 ## Entregável da semana
 
 Notebook resolvido e um documento curto em `docs/`: o painel mínimo de monitoramento que você exigiria para aprovar um RAG em produção (métricas, thresholds de alerta, responsável).

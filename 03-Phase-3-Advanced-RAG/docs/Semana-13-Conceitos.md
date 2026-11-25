@@ -161,6 +161,10 @@ Para situar o que vem depois: **query rewriting** e **HyDE** (gerar uma resposta
 5. O que é "lost in the middle" e que decisão de design ele motiva?
 6. Em que situação fine-tuning resolve o que RAG não resolve, e vice-versa?
 
+## Perguntas do entrevistador
+
+1. Seu pipeline RAG está recuperando trechos relevantes de PDFs corporativos, mas o LLM ainda omite informações importantes ou mistura fatos de seções diferentes. Como você diagnostica se o gargalo está na estratégia de chunking (tamanho, overlap, fronteiras semânticas), no prompt de grounding ou no limite de contexto?
+
 ## Entregável da semana
 
 Notebook resolvido e uma tabela em `docs/` comparando as três chunking strategies no seu corpus.

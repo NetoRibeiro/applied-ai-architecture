@@ -180,6 +180,10 @@ Salve o `state_dict`, não o objeto do modelo (que depende do código da classe 
 5. Qual deve ser a loss inicial de um classificador de 10 classes? E de um language model com vocabulário de 32.000 tokens?
 6. Por que o test set só pode ser usado uma vez?
 
+## Perguntas do entrevistador
+
+1. Ao colocar seu modelo PyTorch em inferência, as previsões para o mesmo input variam entre chamadas e a acurácia caiu em relação à validação. O que provavelmente faltou configurar entre treino e avaliação (`model.eval()`, `torch.no_grad()`, BatchNorm, Dropout) e como você blinda o pipeline contra isso?
+
 ## Entregável da semana
 
 Notebook resolvido com as curvas train/validation de dois modelos (sem e com regularization) e duas frases de diagnóstico.

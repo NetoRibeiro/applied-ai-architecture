@@ -176,6 +176,10 @@ Em nível prático: mais parâmetros, mais dados e mais compute melhoram a loss 
 5. O que é weight tying e por que afeta a loss inicial?
 6. Qual a diferença entre pre-norm e post-norm?
 
+## Perguntas do entrevistador
+
+1. Ao analisar um Transformer decoder em produção, quais mecanismos (residual connections, LayerNorm pré-atenção e weight tying) evitam o colapso dos gradientes e reduzem o tamanho do modelo? Como o tamanho da janela de contexto e o número de heads afetam o orçamento de VRAM?
+
 ## Entregável da semana
 
 Notebook resolvido, a loss curve e uma amostra de texto do seu mini-GPT comparada à do bigram da Semana 6.

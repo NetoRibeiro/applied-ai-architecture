@@ -134,6 +134,10 @@ O limite do bigram é o contexto de um token: ele não tem como manter concordâ
 5. Qual a diferença entre o token embedding de um LLM e o sentence embedding usado em RAG?
 6. Por que um texto em português custa mais tokens que o equivalente em inglês?
 
+## Perguntas do entrevistador
+
+1. Por que o mesmo prompt em português consome significativamente mais tokens — e custa mais caro e fica mais lento — em um modelo treinado majoritariamente em inglês? Como o comportamento do tokenizer (BPE) impacta contexto, latência e a qualidade em domínios técnicos?
+
 ## Entregável da semana
 
 Notebook resolvido e amostras geradas em três temperatures, com uma frase comparando-as.

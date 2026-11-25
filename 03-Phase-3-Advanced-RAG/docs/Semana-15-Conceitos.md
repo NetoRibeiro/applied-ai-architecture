@@ -166,6 +166,10 @@ Métricas agregadas dizem **quanto**; a análise por query diz **por quê**. Seg
 5. Qual a diferença entre linear e exponential gain e quando a segunda faz sentido?
 6. Por que o bootstrap deve ser pareado?
 
+## Perguntas do entrevistador
+
+1. Você testou dois retrievers: o Sistema A tem `Recall@10` de 0,92 e `MRR` de 0,41; o Sistema B tem `Recall@10` de 0,85 e `MRR` de 0,78. Qual você escolhe para alimentar um RAG com janela de contexto curta e por que `NDCG@K` ajuda quando há múltiplos documentos com relevância graduada?
+
 ## Entregável da semana
 
 Notebook resolvido e, em `docs/`, uma tabela comparando três sistemas com intervalo de confiança da diferença entre os dois melhores.

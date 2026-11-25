@@ -157,6 +157,10 @@ Dense retrieval captura paráfrase e sinônimos ("descanso anual" → "férias")
 5. O que são hard negatives e por que importam no treino de embedding models?
 6. Por que trocar de embedding model exige reindexar tudo?
 
+## Perguntas do entrevistador
+
+1. Sua base vetorial cresceu de 20 mil para 20 milhões de documentos e a busca exata ultrapassou o SLA de latência. Ao migrar para um índice HNSW, quais parâmetros (`M`, `ef_construction`, `ef_search`) você ajusta para equilibrar recall, latência e consumo de RAM?
+
 ## Entregável da semana
 
 Notebook resolvido e o gráfico recall × latency do HNSW com a sua escolha de `efSearch` justificada em uma frase.

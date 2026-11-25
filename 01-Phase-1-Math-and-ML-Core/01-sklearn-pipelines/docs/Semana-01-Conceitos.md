@@ -146,6 +146,10 @@ Três alavancas para lidar com desbalanceamento, da mais barata para a mais inva
 5. Um modelo tem ROC-AUC de 0,98 em um dataset com 0,1% de positivos. Por que isso pode ser pouco informativo?
 6. Qual a diferença entre `macro avg` e `weighted avg` e qual delas esconde o problema da minority class?
 
+## Perguntas do entrevistador
+
+1. Em produção, seu classificador de fraude tem ROC-AUC de 0,97, mas o time de risco reclama que fraudes reais estão passando e clientes legítimos estão sendo bloqueados. Como você investiga esse problema, qual curva ou métrica escolhe para renegociar o threshold com o negócio e como garante que não houve data leakage no pipeline?
+
 ## Entregável da semana
 
 Notebook resolvido no GitHub e um parágrafo em `docs/impacto-de-negocio.md` descrevendo, para o modelo de fraude, quanto custa cada false positive e cada false negative, qual threshold você recomendaria e como a mesma análise se aplica a um hallucination detector em um sistema RAG.

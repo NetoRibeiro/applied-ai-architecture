@@ -170,6 +170,10 @@ Tudo desta semana cabe em `TrainingArguments(learning_rate=..., num_train_epochs
 5. Em que situações você escolheria um encoder ajustado em vez de um LLM com prompt?
 6. Como simular batch size 64 em uma GPU que só comporta 16?
 
+## Perguntas do entrevistador
+
+1. Precisamos classificar 50 mil tickets por dia em 12 categorias com latência máxima de 20 ms e custo previsível. Quando faz mais sentido fazer fine-tuning de um encoder compacto em vez de chamar um LLM generativo via API, e quais cuidados você toma no training loop manual (warmup, gradient clipping, early stopping)?
+
 ## Entregável da semana
 
 Notebook resolvido, o classification report e um parágrafo: "em que parte de um sistema RAG corporativo eu usaria este classificador?".

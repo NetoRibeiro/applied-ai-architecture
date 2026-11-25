@@ -156,6 +156,10 @@ A ordem de preferência é a da tabela: quanto mais abaixo, mais a conclusão de
 5. Em que o synthetic control generaliza o DiD?
 6. Por que os pesos encontrados podem diferir dos "verdadeiros" sem que o resultado esteja errado?
 
+## Perguntas do entrevistador
+
+1. Você precisa medir o impacto de uma mudança regulatória ou lançamento aplicado a um único país inteiro (apenas uma unidade tratada). Como o Synthetic Control Method constrói o contrafactual a partir dos donors, como você avalia o ajuste pelo RMSPE pré-intervenção e como calcula significância com testes placebo?
+
 ## Entregável da semana
 
 Notebook resolvido e um relatório curto em `docs/`: gráfico treated × synthetic, pesos, efeito estimado, placebo p-value e as hipóteses.

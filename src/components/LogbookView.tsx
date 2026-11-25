@@ -681,11 +681,17 @@ export default function LogbookView({
                       const selfCheckCount = logEntries.filter(
                         (e) => e.week === week.week && e.title.startsWith('Autoavaliação'),
                       ).length;
-                      if (selfCheckCount === 0) return null;
+                      const interviewCount = logEntries.filter(
+                        (e) => e.week === week.week && e.title.startsWith('Entrevista'),
+                      ).length;
+                      if (selfCheckCount === 0 && interviewCount === 0) return null;
+                      const parts: string[] = [];
+                      if (selfCheckCount > 0) parts.push(`Autoavaliação: ${selfCheckCount}`);
+                      if (interviewCount > 0) parts.push(`Entrevista técnica: ${interviewCount}`);
                       return (
                         <div className="pt-2 border-t border-slate-200 flex items-center justify-between gap-3 text-xs text-slate-600 tabular-nums">
                           <span>
-                            Autoavaliação: {selfCheckCount} resposta(s) salva(s) no Diário Cronológico
+                            {parts.join(' · ')} — salva(s) no Diário Cronológico
                           </span>
                           <button
                             type="button"

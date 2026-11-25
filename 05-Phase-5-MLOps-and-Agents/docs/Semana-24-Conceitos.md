@@ -164,6 +164,10 @@ Localmente, um arquivo SQLite e uma pasta de artifacts. Em equipe, um tracking s
 5. Para que serve a model signature?
 6. Qual a diferença entre shadow deployment e canary?
 
+## Perguntas do entrevistador
+
+1. Um modelo em produção começou a degradar após um deploy na sexta-feira e o time não sabe exatamente qual dataset, hiperparâmetro ou commit gerou aquela versão. Como você estrutura MLflow Tracking, Model Registry com aliases e rollbacks seguros com canary ou shadow deployment?
+
 ## Entregável da semana
 
 Notebook resolvido e uma captura (ou tabela exportada) da comparação de runs em `docs/`, com a justificativa da versão promovida.

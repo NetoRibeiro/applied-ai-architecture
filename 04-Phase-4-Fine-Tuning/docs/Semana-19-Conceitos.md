@@ -175,6 +175,10 @@ A comparação honesta é com o mesmo prompt, o mesmo conjunto de validation e a
 5. Por que carregar em fp32 e usar autocast, em vez de carregar em fp16, na T4?
 6. A loss inicial de um modelo pré-treinado veio muito alta. O que você verifica primeiro?
 
+## Perguntas do entrevistador
+
+1. Durante o fine-tuning instrucional com LoRA, você esqueceu de aplicar label masking nos tokens do system prompt e da pergunta do usuário. Que impacto isso tem na loss, no comportamento do modelo em inferência e no risco de memorização?
+
 ## Entregável da semana
 
 Notebook resolvido, o adapter salvo e uma tabela antes/depois (JSON válido, categoria correta, prioridade correta) em `docs/`.

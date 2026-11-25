@@ -170,6 +170,10 @@ Juntando as peças da trilha, o registro mínimo para um modelo em produção: m
 5. O que uma sensitivity analysis acrescenta a uma decision matrix?
 6. Por que notebooks dificultam a reprodução e o que usar no lugar?
 
+## Perguntas do entrevistador
+
+1. Um engenheiro sênior saiu do time e ninguém consegue reproduzir os resultados do modelo principal nem entender por que um determinado banco vetorial foi escolhido há seis meses. Como você estrutura RFCs, ADRs imutáveis com review triggers e pipelines reproduzíveis com um único comando?
+
 ## Entregável da semana
 
 Notebook resolvido; um ADR real em `docs/` (sugestão: a escolha do vector database da Semana 12, com os seus pesos); e um RFC de duas páginas: "Como padronizaremos os A/B tests".

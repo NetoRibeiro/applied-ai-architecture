@@ -160,6 +160,10 @@ Mude **uma variável por vez** (chunk size, `k`, reranker, prompt, modelo) e com
 5. Por que semantic similarity é uma medida fraca de answer correctness?
 6. Qual a diferença entre métricas reference-free e reference-based e onde cada uma é usada?
 
+## Perguntas do entrevistador
+
+1. Os usuários reclamam que o chatbot de RAG está alucinando. Como você separa quantitativamente se a falha veio do retriever (Context Recall/Precision baixos) ou do gerador (Faithfulness baixa), e como monta um conjunto de avaliação contínua antes de aprovar mudanças no prompt ou nos chunks?
+
 ## Entregável da semana
 
 Notebook resolvido, a tabela comparativa de configurações e um relatório de uma página em `docs/` com: métricas, os três piores erros classificados na matriz de diagnóstico e a próxima melhoria que você faria.

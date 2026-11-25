@@ -168,6 +168,10 @@ Outras fontes de instrumentos: atribuição aleatória de atendentes ou revisore
 5. Qual a diferença entre confounder, mediator e collider, e qual deles você controla?
 6. Como um encouragement design mede o efeito de uma feature opt-in?
 
+## Perguntas do entrevistador
+
+1. Usuários que ativam o copiloto de IA retêm 30% mais, mas a feature é opt-in e power users já retêm mais naturalmente. Quando o Propensity Score Matching resolve esse viés de seleção, onde ele falha com confounders não observados e como um encouragement design com Instrumental Variables estima o efeito causal?
+
 ## Entregável da semana
 
 Notebook resolvido e uma nota em `docs/`: uma afirmação correlacional que você já ouviu sobre uma feature, os confounders prováveis e um instrumento ou encouragement design que você proporia.

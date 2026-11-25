@@ -180,6 +180,10 @@ A isso se somam activations e KV cache, que crescem com batch size e contexto. `
 5. O que `add_generation_prompt=True` acrescenta e o que acontece sem ele?
 6. Por que `safetensors` substituiu arquivos `.bin` baseados em pickle?
 
+## Perguntas do entrevistador
+
+1. Um assistente de suporte ao cliente usa um LLM com `temperature=0.9` e `top_p=0.95` e está inventando políticas de reembolso, enquanto outro fluxo de geração criativa ficou repetitivo com greedy decoding. Como você explica a relação entre `logits`, `temperature`, `top-k` e `top-p`, e qual configuração recomenda para cada caso?
+
 ## Entregável da semana
 
 Notebook resolvido e uma tabela em `docs/` com o mesmo prompt gerado em quatro configurações de decoding.

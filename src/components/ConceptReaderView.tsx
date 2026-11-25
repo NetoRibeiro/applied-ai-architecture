@@ -5,6 +5,7 @@ import remarkGfm from 'remark-gfm';
 import {
   ArrowRight,
   BookOpen,
+  Briefcase,
   Check,
   ChevronLeft,
   ChevronRight,
@@ -27,7 +28,9 @@ import type {
   WeeklyStepId,
 } from '../types';
 
-interface SelfCheckQuestion {
+type QuestionKind = 'self' | 'interviewer';
+
+interface ConceptQuestion {
   number: number;
   text: string;
 }
@@ -40,14 +43,17 @@ function getTodayLocalIsoDate(): string {
   return `${y}-${m}-${d}`;
 }
 
-function splitConceptSelfCheck(markdown: string): {
+function extractNumberedSection(
+  markdown: string,
+  headingRegex: RegExp,
+): {
   before: string;
-  questions: SelfCheckQuestion[];
+  questions: ConceptQuestion[];
   after: string;
-} {
-  const headingMatch = markdown.match(/^##\s+Perguntas de autoavaliação\s*$/im);
+} | null {
+  const headingMatch = markdown.match(headingRegex);
   if (!headingMatch || headingMatch.index === undefined) {
-    return { before: markdown, questions: [], after: '' };
+    return null;
   }
 
   const sectionStart = headingMatch.index;
@@ -63,7 +69,7 @@ function splitConceptSelfCheck(markdown: string): {
       ? rest.slice(nextHeadingMatch.index + 1)
       : '';
 
-  const questions: SelfCheckQuestion[] = [];
+  const questions: ConceptQuestion[] = [];
   for (const rawLine of sectionBody.split('\n')) {
     const lineMatch = rawLine.trim().match(/^(\d+)\.\s+(.+)$/);
     if (lineMatch) {
@@ -75,13 +81,72 @@ function splitConceptSelfCheck(markdown: string): {
   }
 
   if (questions.length === 0) {
-    return { before: markdown, questions: [], after: '' };
+    return null;
   }
 
   return {
     before: markdown.slice(0, sectionStart).trimEnd(),
     questions,
     after: after.trimStart(),
+  };
+}
+
+function splitConceptSections(markdown: string): {
+  before: string;
+  selfCheckQuestions: ConceptQuestion[];
+  interviewerQuestions: ConceptQuestion[];
+  after: string;
+} {
+  const selfSection = extractNumberedSection(
+    markdown,
+    /^##\s+Perguntas de autoavaliação\s*$/im,
+  );
+
+  if (!selfSection) {
+    const interviewerOnly = extractNumberedSection(
+      markdown,
+      /^##\s+Perguntas do entrevistador\s*$/im,
+    );
+    if (!interviewerOnly) {
+      return {
+        before: markdown,
+        selfCheckQuestions: [],
+        interviewerQuestions: [],
+        after: '',
+      };
+    }
+    return {
+      before: interviewerOnly.before,
+      selfCheckQuestions: [],
+      interviewerQuestions: interviewerOnly.questions,
+      after: interviewerOnly.after,
+    };
+  }
+
+  const interviewerAfterSelf = extractNumberedSection(
+    selfSection.after,
+    /^##\s+Perguntas do entrevistador\s*$/im,
+  );
+
+  if (!interviewerAfterSelf) {
+    return {
+      before: selfSection.before,
+      selfCheckQuestions: selfSection.questions,
+      interviewerQuestions: [],
+      after: selfSection.after,
+    };
+  }
+
+  const combinedBefore =
+    interviewerAfterSelf.before.trim().length > 0
+      ? `${selfSection.before}\n\n${interviewerAfterSelf.before.trim()}`
+      : selfSection.before;
+
+  return {
+    before: combinedBefore,
+    selfCheckQuestions: selfSection.questions,
+    interviewerQuestions: interviewerAfterSelf.questions,
+    after: interviewerAfterSelf.after,
   };
 }
 
@@ -155,10 +220,13 @@ export default function ConceptReaderView({
   const [revealedCells, setRevealedCells] = useState<Record<number, boolean>>({});
   const [revealAll, setRevealAll] = useState(false);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  const [editingQuestion, setEditingQuestion] = useState<number | null>(null);
+  const [editingKey, setEditingKey] = useState<string | null>(null);
   const [draftAnswer, setDraftAnswer] = useState('');
-  const [savingQuestion, setSavingQuestion] = useState<number | null>(null);
-  const [saveFeedback, setSaveFeedback] = useState<string | null>(null);
+  const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [saveFeedback, setSaveFeedback] = useState<{
+    kind: QuestionKind;
+    message: string;
+  } | null>(null);
 
   useEffect(() => {
     setTab(initialTab);
@@ -170,7 +238,7 @@ export default function ConceptReaderView({
     setError(null);
     setRevealedCells({});
     setRevealAll(false);
-    setEditingQuestion(null);
+    setEditingKey(null);
     setDraftAnswer('');
     setSaveFeedback(null);
 
@@ -203,48 +271,63 @@ export default function ConceptReaderView({
   const doneSteps = countCompletedSteps(currentLog);
 
   const parsedConcept = useMemo(
-    () => (detail ? splitConceptSelfCheck(detail.conceptMarkdown) : null),
+    () => (detail ? splitConceptSections(detail.conceptMarkdown) : null),
     [detail],
   );
 
-  const getEntryForQuestion = (weekNumber: number, questionNumber: number): LogbookEntry | undefined => {
+  const getQuestionKey = (kind: QuestionKind, questionNumber: number) =>
+    `${kind}:${questionNumber}`;
+
+  const getEntryForQuestion = (
+    kind: QuestionKind,
+    weekNumber: number,
+    questionNumber: number,
+  ): LogbookEntry | undefined => {
     const weekStr = String(weekNumber).padStart(2, '0');
+    const prefix = kind === 'interviewer' ? 'Entrevista' : 'Autoavaliação';
     const suffix = `Semana ${weekStr} · Pergunta ${questionNumber}`;
     return logEntries.find(
       (entry) =>
         entry.week === weekNumber &&
-        entry.title.startsWith('Autoavaliação') &&
+        entry.title.startsWith(prefix) &&
         entry.title.endsWith(suffix),
     );
   };
 
-  const handleOpenAnswerBox = (question: SelfCheckQuestion) => {
+  const handleOpenAnswerBox = (kind: QuestionKind, question: ConceptQuestion) => {
     if (!detail) return;
-    const existing = getEntryForQuestion(detail.week, question.number);
-    setEditingQuestion(question.number);
+    const existing = getEntryForQuestion(kind, detail.week, question.number);
+    setEditingKey(getQuestionKey(kind, question.number));
     setDraftAnswer(existing ? extractSavedAnswer(existing.notes) : '');
     setSaveFeedback(null);
   };
 
-  const handleSaveQuestionAnswer = async (question: SelfCheckQuestion) => {
+  const handleSaveQuestionAnswer = async (kind: QuestionKind, question: ConceptQuestion) => {
     if (!detail) return;
     const trimmed = draftAnswer.trim();
     if (!trimmed) return;
 
-    const existing = getEntryForQuestion(detail.week, question.number);
+    const existing = getEntryForQuestion(kind, detail.week, question.number);
     const today = getTodayLocalIsoDate();
     const weekStr = String(detail.week).padStart(2, '0');
+    const prefix = kind === 'interviewer' ? 'Entrevista' : 'Autoavaliação';
+    const promptPrefix =
+      kind === 'interviewer'
+        ? `Pergunta do entrevistador ${question.number}`
+        : `Pergunta ${question.number}`;
+
     const payload: Omit<LogbookEntry, 'id'> = {
       date: today,
       week: detail.week,
-      title: `Autoavaliação · Fase ${detail.phase} · Semana ${weekStr} · Pergunta ${question.number}`,
+      title: `${prefix} · Fase ${detail.phase} · Semana ${weekStr} · Pergunta ${question.number}`,
       hours: existing ? existing.hours : 0,
-      notes: `Pergunta ${question.number}: ${question.text}\n\nResposta:\n${trimmed}`,
+      notes: `${promptPrefix}: ${question.text}\n\nResposta:\n${trimmed}`,
       blockers: existing?.blockers ?? '',
       commandSnippet: existing?.commandSnippet,
     };
 
-    setSavingQuestion(question.number);
+    const key = getQuestionKey(kind, question.number);
+    setSavingKey(key);
     setSaveFeedback(null);
     try {
       if (existing) {
@@ -253,22 +336,28 @@ export default function ConceptReaderView({
         await onAddLogEntry(payload);
       }
 
-      if (parsedConcept) {
-        const answeredAfterSave = parsedConcept.questions.filter(
-          (q) => q.number === question.number || Boolean(getEntryForQuestion(detail.week, q.number)),
+      if (kind === 'self' && parsedConcept && parsedConcept.selfCheckQuestions.length > 0) {
+        const answeredAfterSave = parsedConcept.selfCheckQuestions.filter(
+          (q) =>
+            q.number === question.number ||
+            Boolean(getEntryForQuestion('self', detail.week, q.number)),
         ).length;
-        if (answeredAfterSave >= parsedConcept.questions.length && !currentLog.steps.self_check) {
+        if (
+          answeredAfterSave >= parsedConcept.selfCheckQuestions.length &&
+          !currentLog.steps.self_check
+        ) {
           onToggleStep(detail.week, 'self_check');
         }
       }
 
-      setEditingQuestion(null);
+      setEditingKey(null);
       setDraftAnswer('');
-      setSaveFeedback(
-        `Pergunta ${question.number} salva no LogBook (${today} · Fase ${detail.phase} · Semana ${weekStr}).`,
-      );
+      setSaveFeedback({
+        kind,
+        message: `${prefix} · Pergunta ${question.number} salva no LogBook (${today} · Fase ${detail.phase} · Semana ${weekStr}).`,
+      });
     } finally {
-      setSavingQuestion(null);
+      setSavingKey(null);
     }
   };
 
@@ -569,93 +658,27 @@ export default function ConceptReaderView({
                   </ReactMarkdown>
                 </div>
 
-                {parsedConcept.questions.length > 0 && (
-                  <section
-                    aria-label="Perguntas de autoavaliação"
-                    className="mx-auto max-w-[70ch] border-t border-slate-200 pt-8 space-y-5"
-                  >
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                      <div className="space-y-1">
-                        <h2 className="text-xl font-semibold text-[#14213D] tracking-tight">
-                          Perguntas de autoavaliação
-                        </h2>
-                        <p className="text-xs text-slate-500 tabular-nums">
-                          Fase {detail.phase} · Semana {String(detail.week).padStart(2, '0')} ·{' '}
-                          {
-                            parsedConcept.questions.filter((q) =>
-                              Boolean(getEntryForQuestion(detail.week, q.number)),
-                            ).length
-                          }
-                          /{parsedConcept.questions.length} respondidas no LogBook
-                        </p>
-                      </div>
+                {(() => {
+                  if (!detail) return null;
+                  const weekStr = String(detail.week).padStart(2, '0');
+                  const today = getTodayLocalIsoDate();
 
-                      <button
-                        type="button"
-                        onClick={() => onOpenLogbook('journal')}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
-                      >
-                        <BookOpen className="w-3.5 h-3.5" />
-                        <span>Abrir no LogBook</span>
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-
-                    {firebaseConfigured && !canPersistToCloud && (
-                      <div className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
-                        <span>
-                          {!user
-                            ? 'Suas respostas ficam salvas neste navegador e serão vinculadas ao seu LogBook. Entre com Google para salvar na nuvem.'
-                            : 'Sua conta ainda aguarda liberação para gravação em nuvem; por enquanto as respostas ficam salvas localmente.'}
-                        </span>
-                        {!user ? (
-                          <button
-                            type="button"
-                            onClick={() => void onSignIn()}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 font-medium text-white bg-[#14213D] hover:bg-[#1E3158] rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
-                          >
-                            <LogIn className="w-3.5 h-3.5" />
-                            <span>Entrar com Google</span>
-                          </button>
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={onOpenAccess}
-                            className="px-3 py-1.5 font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
-                          >
-                            Ver Acesso
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {saveFeedback && (
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5 text-xs text-emerald-900 flex items-center justify-between gap-3">
-                        <span className="flex items-center gap-2">
-                          <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                          <span>{saveFeedback}</span>
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => onOpenLogbook('journal')}
-                          className="font-medium underline underline-offset-2 hover:text-emerald-950 whitespace-nowrap shrink-0 cursor-pointer"
-                        >
-                          Ver no LogBook
-                        </button>
-                      </div>
-                    )}
-
+                  const renderQuestionItems = (
+                    kind: QuestionKind,
+                    questions: ConceptQuestion[],
+                  ) => (
                     <div className="border border-slate-200 rounded-xl divide-y divide-slate-200 bg-white overflow-hidden">
-                      {parsedConcept.questions.map((question) => {
-                        const savedEntry = getEntryForQuestion(detail.week, question.number);
+                      {questions.map((question) => {
+                        const qKey = getQuestionKey(kind, question.number);
+                        const savedEntry = getEntryForQuestion(kind, detail.week, question.number);
                         const savedText = savedEntry ? extractSavedAnswer(savedEntry.notes) : '';
-                        const isEditing = editingQuestion === question.number;
-                        const isSaving = savingQuestion === question.number;
-                        const today = getTodayLocalIsoDate();
-                        const weekStr = String(detail.week).padStart(2, '0');
+                        const isEditing = editingKey === qKey;
+                        const isSaving = savingKey === qKey;
+                        const kindLabel =
+                          kind === 'interviewer' ? 'Entrevista técnica' : 'Autoavaliação';
 
                         return (
-                          <div key={question.number} className="p-4 sm:p-5 space-y-3">
+                          <div key={qKey} className="p-4 sm:p-5 space-y-3">
                             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
                               <div className="flex items-start gap-2.5 min-w-0">
                                 <span className="font-mono text-xs font-semibold text-[#14213D] tabular-nums pt-0.5 shrink-0">
@@ -675,10 +698,10 @@ export default function ConceptReaderView({
                                 type="button"
                                 onClick={() => {
                                   if (isEditing) {
-                                    setEditingQuestion(null);
+                                    setEditingKey(null);
                                     setDraftAnswer('');
                                   } else {
-                                    handleOpenAnswerBox(question);
+                                    handleOpenAnswerBox(kind, question);
                                   }
                                 }}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-md transition-colors whitespace-nowrap shrink-0 self-start cursor-pointer"
@@ -704,26 +727,30 @@ export default function ConceptReaderView({
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter' && draftAnswer.trim() && !isSaving) {
                                       e.preventDefault();
-                                      void handleSaveQuestionAnswer(question);
+                                      void handleSaveQuestionAnswer(kind, question);
                                     }
                                     if (e.key === 'Escape') {
-                                      setEditingQuestion(null);
+                                      setEditingKey(null);
                                       setDraftAnswer('');
                                     }
                                   }}
-                                  placeholder="Digite sua resposta aqui e pressione Enter ou clique em Salvar..."
+                                  placeholder={
+                                    kind === 'interviewer'
+                                      ? 'Estruture sua resposta como em uma entrevista técnica e pressione Enter...'
+                                      : 'Digite sua resposta aqui e pressione Enter ou clique em Salvar...'
+                                  }
                                   className="w-full px-3.5 py-2 text-sm text-[#0F172A] bg-white border border-slate-300 focus:border-[#14213D] focus:outline-none rounded-lg"
                                 />
                                 <div className="flex flex-wrap items-center justify-between gap-2">
                                   <span className="text-xs text-slate-500 tabular-nums">
-                                    Rastreio: {today} · Fase {detail.phase} · Semana {weekStr} ·
-                                    Pergunta {question.number}
+                                    Rastreio: {today} · Fase {detail.phase} · Semana {weekStr} ·{' '}
+                                    {kindLabel} · Pergunta {question.number}
                                   </span>
                                   <div className="flex items-center gap-2">
                                     <button
                                       type="button"
                                       onClick={() => {
-                                        setEditingQuestion(null);
+                                        setEditingKey(null);
                                         setDraftAnswer('');
                                       }}
                                       className="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-[#0F172A] cursor-pointer"
@@ -733,7 +760,7 @@ export default function ConceptReaderView({
                                     <button
                                       type="button"
                                       disabled={!draftAnswer.trim() || isSaving}
-                                      onClick={() => void handleSaveQuestionAnswer(question)}
+                                      onClick={() => void handleSaveQuestionAnswer(kind, question)}
                                       className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-white bg-[#14213D] hover:bg-[#1E3158] disabled:opacity-50 rounded-md transition-colors cursor-pointer"
                                     >
                                       <Check className="w-3.5 h-3.5" />
@@ -749,7 +776,7 @@ export default function ConceptReaderView({
                                 <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500 tabular-nums">
                                   <span>
                                     LogBook · {savedEntry.date} · Fase {detail.phase} · Semana{' '}
-                                    {weekStr} · Pergunta {question.number}
+                                    {weekStr} · {kindLabel} · Pergunta {question.number}
                                   </span>
                                   <div className="flex items-center gap-3">
                                     <button
@@ -778,8 +805,157 @@ export default function ConceptReaderView({
                         );
                       })}
                     </div>
-                  </section>
-                )}
+                  );
+
+                  const hasAnyQuestions =
+                    parsedConcept.selfCheckQuestions.length > 0 ||
+                    parsedConcept.interviewerQuestions.length > 0;
+
+                  if (!hasAnyQuestions) return null;
+
+                  return (
+                    <>
+                      {parsedConcept.selfCheckQuestions.length > 0 && (
+                        <section
+                          aria-label="Perguntas de autoavaliação"
+                          className="mx-auto max-w-[70ch] border-t border-slate-200 pt-8 space-y-5"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="space-y-1">
+                              <h2 className="text-xl font-semibold text-[#14213D] tracking-tight">
+                                Perguntas de autoavaliação
+                              </h2>
+                              <p className="text-xs text-slate-500 tabular-nums">
+                                Fase {detail.phase} · Semana {weekStr} ·{' '}
+                                {
+                                  parsedConcept.selfCheckQuestions.filter((q) =>
+                                    Boolean(getEntryForQuestion('self', detail.week, q.number)),
+                                  ).length
+                                }
+                                /{parsedConcept.selfCheckQuestions.length} respondidas no LogBook
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => onOpenLogbook('journal')}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                            >
+                              <BookOpen className="w-3.5 h-3.5" />
+                              <span>Abrir no LogBook</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {firebaseConfigured && !canPersistToCloud && (
+                            <div className="bg-[#F8FAFC] border border-slate-200 rounded-lg px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-600">
+                              <span>
+                                {!user
+                                  ? 'Suas respostas ficam salvas neste navegador e serão vinculadas ao seu LogBook. Entre com Google para salvar na nuvem.'
+                                  : 'Sua conta ainda aguarda liberação para gravação em nuvem; por enquanto as respostas ficam salvas localmente.'}
+                              </span>
+                              {!user ? (
+                                <button
+                                  type="button"
+                                  onClick={() => void onSignIn()}
+                                  className="inline-flex items-center gap-1.5 px-3 py-1.5 font-medium text-white bg-[#14213D] hover:bg-[#1E3158] rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                                >
+                                  <LogIn className="w-3.5 h-3.5" />
+                                  <span>Entrar com Google</span>
+                                </button>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={onOpenAccess}
+                                  className="px-3 py-1.5 font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-100 rounded-md whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                                >
+                                  Ver Acesso
+                                </button>
+                              )}
+                            </div>
+                          )}
+
+                          {saveFeedback && saveFeedback.kind === 'self' && (
+                            <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5 text-xs text-emerald-900 flex items-center justify-between gap-3">
+                              <span className="flex items-center gap-2">
+                                <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                                <span>{saveFeedback.message}</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => onOpenLogbook('journal')}
+                                className="font-medium underline underline-offset-2 hover:text-emerald-950 whitespace-nowrap shrink-0 cursor-pointer"
+                              >
+                                Ver no LogBook
+                              </button>
+                            </div>
+                          )}
+
+                          {renderQuestionItems('self', parsedConcept.selfCheckQuestions)}
+                        </section>
+                      )}
+
+                      {parsedConcept.interviewerQuestions.length > 0 && (
+                        <section
+                          aria-label="Perguntas do entrevistador"
+                          className="mx-auto max-w-[70ch] border-t border-slate-200 pt-8 space-y-5"
+                        >
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <Briefcase className="w-4 h-4 text-[#14213D] shrink-0" />
+                                <h2 className="text-xl font-semibold text-[#14213D] tracking-tight">
+                                  Perguntas do entrevistador
+                                </h2>
+                              </div>
+                              <p className="text-xs text-slate-500 tabular-nums">
+                                Simulação de entrevista técnica · Fase {detail.phase} · Semana{' '}
+                                {weekStr} ·{' '}
+                                {
+                                  parsedConcept.interviewerQuestions.filter((q) =>
+                                    Boolean(
+                                      getEntryForQuestion('interviewer', detail.week, q.number),
+                                    ),
+                                  ).length
+                                }
+                                /{parsedConcept.interviewerQuestions.length} respondida(s) no
+                                LogBook
+                              </p>
+                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => onOpenLogbook('journal')}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer"
+                            >
+                              <BookOpen className="w-3.5 h-3.5" />
+                              <span>Abrir no LogBook</span>
+                              <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+
+                          {saveFeedback && saveFeedback.kind === 'interviewer' && (
+                            <div className="bg-emerald-50 border border-emerald-200 rounded-lg px-4 py-2.5 text-xs text-emerald-900 flex items-center justify-between gap-3">
+                              <span className="flex items-center gap-2">
+                                <Check className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                                <span>{saveFeedback.message}</span>
+                              </span>
+                              <button
+                                type="button"
+                                onClick={() => onOpenLogbook('journal')}
+                                className="font-medium underline underline-offset-2 hover:text-emerald-950 whitespace-nowrap shrink-0 cursor-pointer"
+                              >
+                                Ver no LogBook
+                              </button>
+                            </div>
+                          )}
+
+                          {renderQuestionItems('interviewer', parsedConcept.interviewerQuestions)}
+                        </section>
+                      )}
+                    </>
+                  );
+                })()}
 
                 {parsedConcept.after && (
                   <div className="reading-prose mx-auto">
@@ -800,16 +976,32 @@ export default function ConceptReaderView({
                     <code className="text-xs bg-slate-100 px-1.5 py-0.5 rounded"># [SEU CÓDIGO AQUI]</code>
                     ) com o gabarito resolvido antes de executar no Colab.
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setRevealAll((prev) => !prev)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-                  >
-                    {revealAll ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                    <span>
-                      {revealAll ? 'Ocultar Todos os Gabaritos' : 'Revelar Todos os Gabaritos'}
-                    </span>
-                  </button>
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
+                    {detail.exerciseCells.some((c) => c.id.endsWith('-entrevista-md')) && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          document
+                            .getElementById('interview-live-coding-test')
+                            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#14213D] bg-slate-100 hover:bg-slate-200 rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                      >
+                        <Briefcase className="w-3.5 h-3.5" />
+                        <span>Teste Prático de Entrevista</span>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setRevealAll((prev) => !prev)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-[#14213D] text-white rounded-md hover:bg-[#1E3158] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                    >
+                      {revealAll ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                      <span>
+                        {revealAll ? 'Ocultar Todos os Gabaritos' : 'Revelar Todos os Gabaritos'}
+                      </span>
+                    </button>
+                  </div>
                 </div>
 
                 {detail.exerciseCells.map((exCell, idx) => {
@@ -819,13 +1011,22 @@ export default function ConceptReaderView({
                     exCell.cellType === 'code' &&
                     gabCell &&
                     gabCell.source.trim() !== exCell.source.trim();
+                  const isInterviewMd = exCell.id.endsWith('-entrevista-md');
+                  const isInterviewCode = exCell.id.endsWith('-entrevista-code');
 
                   if (exCell.cellType === 'markdown') {
                     return (
                       <div
                         key={exCell.id}
+                        id={isInterviewMd ? 'interview-live-coding-test' : undefined}
                         className="bg-white border border-slate-200 rounded-xl px-6 py-5"
                       >
+                        {isInterviewMd && (
+                          <div className="flex items-center gap-2 text-xs font-medium text-[#14213D] pb-3 mb-3 border-b border-slate-200">
+                            <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                            <span>Simulação de Entrevista Técnica · Live Coding</span>
+                          </div>
+                        )}
                         <div className="reading-prose max-w-none text-sm">
                           <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                             {exCell.source}
@@ -843,6 +1044,15 @@ export default function ConceptReaderView({
                       <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between gap-4">
                         <div className="flex items-center gap-2 text-xs text-slate-600 tabular-nums">
                           <span className="font-mono font-medium">Célula {idx + 1}</span>
+                          {isInterviewCode && (
+                            <>
+                              <span aria-hidden="true">·</span>
+                              <span className="inline-flex items-center gap-1 text-[#14213D] font-medium">
+                                <Briefcase className="w-3 h-3" />
+                                <span>Teste Prático de Entrevista</span>
+                              </span>
+                            </>
+                          )}
                           {exCell.hasTodo && (
                             <>
                               <span aria-hidden="true">·</span>

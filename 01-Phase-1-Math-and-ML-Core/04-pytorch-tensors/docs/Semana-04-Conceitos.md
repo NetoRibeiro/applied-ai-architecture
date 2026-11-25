@@ -163,6 +163,10 @@ Um `CUDA out of memory` em treino vem, em ordem de frequência, de: batch size, 
 5. Qual a diferença entre `memory_allocated()` e o que o `nvidia-smi` mostra?
 6. O que é um leaf tensor e onde ficam armazenados os gradients depois de `backward()`?
 
+## Perguntas do entrevistador
+
+1. Você está treinando um modelo em GPU e o uso de VRAM cresce a cada batch até dar Out-of-Memory (OOM), mesmo com o batch size fixo. Quais erros comuns com tensors e autograd causam esse vazamento — como acumular histórico de gradiente em logs ou esquecer `torch.no_grad()` — e como você depura?
+
 ## Entregável da semana
 
 Notebook resolvido, a comparação de tempo CPU vs. GPU registrada em `docs/`, e o **commit de fechamento da Fase 1**.

@@ -170,6 +170,10 @@ Nem toda requisição precisa do modelo maior. Um **router** envia o fácil para
 5. Por que a latência explode quando a utilização se aproxima de 100%?
 6. Em que condições self-hosting sai mais barato que uma API?
 
+## Perguntas do entrevistador
+
+1. Seu serviço de LLM tem TTFT (Time to First Token) de 4 segundos no pico de tráfego com static batching, mesmo sem saturar a memória da GPU. Como continuous batching, KV cache com paginação e separação de capacidade entre prefill e decode resolvem o gargalo?
+
 ## Entregável da semana
 
 Notebook resolvido e uma página em `docs/` com o capacity planning de um serviço hipotético (carga, SLO, réplicas, custo mensal estimado).

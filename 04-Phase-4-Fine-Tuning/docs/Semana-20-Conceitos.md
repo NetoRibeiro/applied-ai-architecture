@@ -156,6 +156,10 @@ Perplexity em um texto de referência é a triagem; a decisão sai das métricas
 5. Qual a diferença entre PTQ e QAT?
 6. Com 12 GB de VRAM, você escolheria um modelo de 7B em fp16 ou um de 13B em 4-bit? Como decidiria?
 
+## Perguntas do entrevistador
+
+1. Você precisa fazer fine-tuning de um modelo de 7B a 14B parâmetros em uma única GPU de 16 GB ou 24 GB sem degradar a qualidade. Como a quantização NF4 com double quantization e paged optimizers funciona no QLoRA, e quando a economia de memória traz perda de precisão inaceitável?
+
 ## Entregável da semana
 
 Notebook resolvido e uma tabela em `docs/`: memória e accuracy da tarefa para base fp32 + LoRA (Semana 19) e base 4-bit + LoRA.

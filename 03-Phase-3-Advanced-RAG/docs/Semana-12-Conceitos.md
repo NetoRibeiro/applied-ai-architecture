@@ -162,6 +162,10 @@ Muitos vector databases indexam de forma assíncrona: um point recém-inserido p
 5. O que torna um upsert idempotent?
 6. Como migrar de um embedding model para outro sem downtime?
 
+## Perguntas do entrevistador
+
+1. Em uma aplicação RAG multi-tenant, cada cliente só pode acessar os próprios documentos na busca semântica. Se você aplicar o filtro de `tenant_id` apenas depois da busca vetorial (post-filtering), o que pode dar errado com o `top_k` e a segurança, e como pre-filtering ou filtered HNSW resolve esse problema?
+
 ## Entregável da semana
 
 Notebook resolvido e uma decision table preenchida para um cenário real seu (ou hipotético) em `docs/`.

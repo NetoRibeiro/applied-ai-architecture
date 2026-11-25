@@ -165,6 +165,10 @@ O conjunto de avaliação desta semana vira um teste automático: toda nova vers
 5. Por que ROUGE e BLEU são medidas fracas de qualidade para respostas abertas?
 6. Como você calcularia o break-even de um projeto de fine-tuning?
 
+## Perguntas do entrevistador
+
+1. Antes de aprovar um modelo fine-tuned para produção, você precisa justificar o investimento para o CTO. Como você desenha o benchmark contra zero-shot/few-shot de modelos frontier, calcula o break-even considerando treino + serving e valida contra regressão em tarefas gerais?
+
 ## Entregável da semana
 
 Notebook resolvido e um `MODEL_CARD.md` em `docs/` com a tabela comparativa (zero-shot, few-shot, fine-tuned), custo em tokens, resultado out-of-distribution e limitações.

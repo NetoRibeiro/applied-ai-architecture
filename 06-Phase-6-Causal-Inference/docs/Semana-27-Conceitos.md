@@ -161,6 +161,10 @@ Particularidades: a unidade costuma ser o usuário (não a requisição), porque
 5. O que é SRM e por que invalida o teste mesmo quando o resultado é positivo?
 6. O que um p-value de 0,03 significa, e o que ele não significa?
 
+## Perguntas do entrevistador
+
+1. Você rodou um teste A/B randomizado por usuário em um marketplace e a nova feature mostrou +6% de conversão, mas no lançamento global de 100% o ganho caiu para +1%. Como você explica esse fenômeno (spillover / canibalização), como checa Sample Ratio Mismatch (SRM) e quando muda para cluster randomization?
+
 ## Entregável da semana
 
 Notebook resolvido e uma nota em `docs/`: para um produto com interação social que você conheça, qual seria a randomization unit correta e por quê.

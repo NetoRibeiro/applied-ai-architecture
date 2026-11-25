@@ -164,6 +164,10 @@ Um resultado de DiD para a diretoria deve conter: a estimativa com intervalo; o 
 5. Por que os erros-padrão precisam ser clustered?
 6. Qual o problema do TWFE em staggered adoption?
 
+## Perguntas do entrevistador
+
+1. A empresa lançou uma funcionalidade de IA em apenas três estados sem sorteio prévio, e um colega compara antes e depois apenas nesses estados para declarar sucesso. Como você usa Difference-in-Differences para corrigir tendências temporais, testa parallel trends e evita viés em adoção escalonada (staggered adoption)?
+
 ## Entregável da semana
 
 Notebook resolvido e um parágrafo em `docs/`, escrito para um diretor: qual foi o efeito do lançamento, com que margem, e quais hipóteses sustentam o número.

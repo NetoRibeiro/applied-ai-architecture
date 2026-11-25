@@ -159,6 +159,10 @@ Alignment por preferências é uma das ferramentas de controle de comportamento,
 5. O que o DPO elimina em relação ao RLHF e por que isso o torna mais estável?
 6. Como você detectaria que o alignment causou drift?
 
+## Perguntas do entrevistador
+
+1. Você aplicou DPO para tornar um assistente mais conciso e seguro, mas ele começou a recusar perguntas válidas ou dar respostas genéricas demais. O que o hiperparâmetro `β` e o reference model controlam nesse comportamento, e como detectar shortcuts no dataset de preferências?
+
 ## Entregável da semana
 
 Notebook resolvido e uma nota em `docs/` com respostas antes/depois do DPO e a preference accuracy no conjunto held-out.

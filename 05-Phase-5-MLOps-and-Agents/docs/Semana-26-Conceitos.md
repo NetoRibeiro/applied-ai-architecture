@@ -187,6 +187,10 @@ O padrão é sempre o mesmo: **tools determinísticas fazem a conta; o LLM orque
 5. Qual a diferença entre workflow e agent, e quando preferir cada um?
 6. No tool calling, quem executa a função e por que isso importa para segurança?
 
+## Perguntas do entrevistador
+
+1. Um agente autônomo chama uma tool de analytics, recebe um erro genérico HTTP 500 ou um JSON malformado e entra em loop infinito gastando tokens. Como você projeta schemas rígidos (constrained decoding), erros acionáveis para auto-correção e decide quando preferir um workflow determinístico a um agent?
+
 ## Entregável da semana
 
 Notebook resolvido e, em `docs/`, a especificação de uma tool analítica do seu contexto de trabalho: nome, description, input schema, output schema e três erros possíveis.

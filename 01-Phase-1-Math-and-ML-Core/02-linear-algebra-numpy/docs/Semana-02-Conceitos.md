@@ -141,6 +141,10 @@ Duas consequências práticas. Primeiro, um cosine de 0,35 entre duas frases, qu
 4. Qual o shape de `A @ B` se `A` é `(32, 128)` e `B` é `(128, 10)`? E de `A.sum(axis=1, keepdims=True)`?
 5. Em um embedding de 1.024 dimensões, qual o desvio aproximado do cosine entre vetores aleatórios? O que isso diz sobre um score de 0,2?
 
+## Perguntas do entrevistador
+
+1. Em um sistema de busca semântica com 5 milhões de embeddings de 1.536 dimensões em float32, quanto de RAM você precisa apenas para armazenar os vetores e como decide entre usar cosine similarity, dot product normalizado ou redução de dimensionalidade sem destruir o ranking?
+
 ## Entregável da semana
 
 Notebook resolvido e uma nota curta em `docs/` explicando, com suas palavras, por que vector databases normalizam os embeddings e o que acontece se a métrica do index não for a do embedding model.

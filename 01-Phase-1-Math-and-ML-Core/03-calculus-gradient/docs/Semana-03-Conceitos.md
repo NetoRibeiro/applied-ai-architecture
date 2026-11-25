@@ -158,6 +158,10 @@ Uma derivada pode ser aproximada por finite differences: `(L(θ + ε) − L(θ �
 5. Por que o backward pass custa aproximadamente o mesmo que o forward pass?
 6. O que o Adam faz de diferente do SGD e por que isso o torna menos sensível à escala das features?
 
+## Perguntas do entrevistador
+
+1. Durante o treinamento de um modelo, a loss de treino oscila violentamente nas primeiras épocas e depois vira `NaN`. Quais hipóteses você investiga primeiro (learning rate, escala de features, gradient explosion) e como ajusta o loop de otimização?
+
 ## Entregável da semana
 
 Notebook resolvido e um gráfico de loss curves para pelo menos três learning rates, com uma frase explicando cada curva.

@@ -139,6 +139,10 @@ A attention move informação entre posições, mas é uma operação essencialm
 5. Qual a diferença entre self-attention e cross-attention? Dê um exemplo de uso de cada.
 6. Por que RoPE substituiu as learned absolute positions nos LLMs atuais?
 
+## Perguntas do entrevistador
+
+1. Por que o custo de memória e computação do self-attention cresce quadraticamente (`O(n^2)`) com o tamanho da sequência, por que dividimos o dot product por `sqrt(d_k)` antes do softmax e como a causal mask garante que o modelo não trapaceie durante o treino?
+
 ## Entregável da semana
 
 Notebook resolvido e um attention heatmap comentado em `docs/`.

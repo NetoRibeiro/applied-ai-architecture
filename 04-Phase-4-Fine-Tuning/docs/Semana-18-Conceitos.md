@@ -149,6 +149,10 @@ Com um MLP pré-treinado em dígitos e uma tarefa nova (dígitos rotacionados), 
 5. Qual o papel de `lora_alpha` e por que costuma acompanhar `r`?
 6. LoRA reduz a memória do forward pass no treino? Explique.
 
+## Perguntas do entrevistador
+
+1. Explique no quadro branco por que decompor `ΔW = B · A` no LoRA reduz drasticamente a memória do otimizador, qual o papel do fator de escala `α / r` na estabilidade do treino e como você escolhe o rank `r` e os módulos-alvo (`q_proj`, `v_proj`, MLP) na prática.
+
 ## Entregável da semana
 
 Notebook resolvido e o gráfico accuracy × rank, com uma frase sobre o ponto de retorno decrescente.
