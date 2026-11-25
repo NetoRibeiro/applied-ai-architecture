@@ -22,7 +22,7 @@ COPY package.json ./
 RUN npm install --omit=dev
 
 COPY --from=builder /app/dist ./dist
-COPY server.ts tsconfig.json LOGBOOK.md ./
+COPY server.ts export-builder.ts tsconfig.json LOGBOOK.md ./
 COPY firebase-applet-config*.json ./
 COPY src/types.ts ./src/types.ts
 COPY 01-Phase-1-Math-and-ML-Core ./01-Phase-1-Math-and-ML-Core

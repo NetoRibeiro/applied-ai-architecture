@@ -166,3 +166,222 @@
   border-top: 1px solid #E2E8F0;
   margin: 2rem 0;
 }
+
+/* Editorial PDF / Print Book Document */
+.pdf-book-cover {
+  background-color: #14213D;
+  color: #F5F3EE;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pdf-book-document {
+  font-family: var(--font-serif);
+  color: #1D1D1F;
+  line-height: 1.55;
+  font-size: 10.5pt;
+}
+
+.pdf-book-document .pdf-chapter + .pdf-chapter {
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #E2E8F0;
+}
+
+.pdf-book-document h1 {
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.22;
+  color: #0F172A;
+  margin: 0 0 1.25rem 0;
+  padding-bottom: 0.55rem;
+  border-bottom: 2px solid #FCA311;
+}
+
+.pdf-book-document .pdf-chapter-appendix h1 {
+  border-bottom: none;
+  font-size: 2rem;
+  margin-top: 1.5rem;
+}
+
+.pdf-book-document h2 {
+  font-family: var(--font-sans);
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #14213D;
+  margin: 1.6rem 0 0.55rem 0;
+  break-after: avoid;
+}
+
+.pdf-book-document h3 {
+  font-family: var(--font-sans);
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: #14213D;
+  margin: 1.25rem 0 0.45rem 0;
+  break-after: avoid;
+}
+
+.pdf-book-document p {
+  margin: 0.7rem 0;
+  orphans: 3;
+  widows: 3;
+}
+
+.pdf-book-document ul,
+.pdf-book-document ol {
+  margin: 0.7rem 0;
+  padding-left: 1.4rem;
+}
+
+.pdf-book-document ul {
+  list-style-type: disc;
+}
+
+.pdf-book-document ol {
+  list-style-type: decimal;
+}
+
+.pdf-book-document li {
+  margin: 0.3rem 0;
+}
+
+.pdf-book-document blockquote {
+  font-family: var(--font-sans);
+  font-size: 0.92em;
+  margin: 1rem 0;
+  padding: 0.65rem 0.95rem;
+  background-color: #F4F6FA;
+  border-left: 3px solid #3D5A80;
+  color: #334155;
+  break-inside: avoid;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pdf-book-document blockquote p {
+  margin: 0;
+}
+
+.pdf-book-document code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background-color: #F1EFE8;
+  color: #0F172A;
+  padding: 0.08rem 0.3rem;
+  border-radius: 0.2rem;
+}
+
+.pdf-book-document pre {
+  font-family: var(--font-mono);
+  font-size: 8.2pt;
+  line-height: 1.4;
+  background-color: #F7F6F2;
+  color: #0F172A;
+  border-left: 3px solid #D9D4C5;
+  padding: 0.7rem 0.9rem;
+  margin: 0.9rem 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow: visible;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pdf-book-document pre code {
+  background: transparent;
+  padding: 0;
+  font-size: inherit;
+}
+
+.pdf-book-document table {
+  font-family: var(--font-sans);
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84em;
+  margin: 1rem 0;
+  break-inside: avoid;
+}
+
+.pdf-book-document th {
+  text-align: left;
+  font-weight: 600;
+  color: #0F172A;
+  padding: 0.45rem 0.55rem;
+  border-bottom: 1.5px solid #14213D;
+  background-color: #F8FAFC;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.pdf-book-document td {
+  padding: 0.4rem 0.55rem;
+  border-bottom: 1px solid #E2E8F0;
+  vertical-align: top;
+  color: #334155;
+}
+
+.pdf-book-document a {
+  color: #1F4E8C;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+@media print {
+  @page {
+    size: A4;
+    margin: 16mm 16mm 18mm 16mm;
+  }
+
+  body {
+    background-color: #FFFFFF !important;
+  }
+
+  #root {
+    display: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  #pdf-export-portal {
+    position: static !important;
+    inset: auto !important;
+    overflow: visible !important;
+    background: #FFFFFF !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+  }
+
+  #pdf-export-sheet {
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  .pdf-book-cover {
+    min-height: 258mm;
+    break-after: page;
+    page-break-after: always;
+    border-radius: 0 !important;
+  }
+
+  .pdf-book-toc {
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .pdf-book-document .pdf-chapter {
+    break-before: page;
+    page-break-before: always;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+}
+

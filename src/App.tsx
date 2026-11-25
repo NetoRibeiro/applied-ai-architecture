@@ -898,6 +898,8 @@ export default function App() {
 
             {view === 'access' && (
               <AccessControlView
+                phases={phases}
+                weeks={weeks}
                 firebaseConfigured={firebaseReady}
                 user={user}
                 profile={profile}

@@ -1,9 +1,12 @@
 import { useState } from 'react';
 import type { User } from 'firebase/auth';
 import {
+  BookOpen,
   CheckCircle2,
   Clock,
+  FileText,
   KeyRound,
+  Loader2,
   Lock,
   LogIn,
   LogOut,
@@ -21,9 +24,21 @@ import {
   isBootstrapAdminEmail,
   updateAccessPolicy,
 } from '../firebase';
-import type { RegistrationMode, UserProfile, UserRole, UserStatus } from '../types';
+import type {
+  ExportBundlePayload,
+  ExportScope,
+  PhaseInfo,
+  RegistrationMode,
+  UserProfile,
+  UserRole,
+  UserStatus,
+  WeekMeta,
+} from '../types';
+import PdfBookPreview from './PdfBookPreview';
 
 interface AccessControlViewProps {
+  phases: PhaseInfo[];
+  weeks: WeekMeta[];
   firebaseConfigured: boolean;
   user: User | null;
   profile: UserProfile | null;
@@ -49,6 +64,8 @@ const ROLE_LABELS: Record<UserRole, string> = {
 };
 
 export default function AccessControlView({
+  phases,
+  weeks,
   firebaseConfigured,
   user,
   profile,
@@ -64,6 +81,13 @@ export default function AccessControlView({
   const [busyUid, setBusyUid] = useState<string | null>(null);
   const [policyBusy, setPolicyBusy] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<string | null>(null);
+  const [exportScope, setExportScope] = useState<ExportScope>('phase');
+  const [exportPhase, setExportPhase] = useState<number>(1);
+  const [exportWeek, setExportWeek] = useState<number>(1);
+  const [includeNotebooks, setIncludeNotebooks] = useState<boolean>(true);
+  const [exportBusy, setExportBusy] = useState<'pdf' | 'epub' | null>(null);
+  const [exportFeedback, setExportFeedback] = useState<string | null>(null);
+  const [pdfBundle, setPdfBundle] = useState<ExportBundlePayload | null>(null);
 
   const isBootstrappedAdmin = isBootstrapAdminEmail(user?.email) && user?.emailVerified;
   const isAdmin = profile?.role === 'admin' || isBootstrappedAdmin;
@@ -143,6 +167,73 @@ export default function AccessControlView({
       setActionFeedback(err instanceof Error ? err.message : 'Erro ao aprovar pendentes.');
     } finally {
       setPolicyBusy(false);
+    }
+  };
+
+  const buildExportQuery = () => {
+    const params = new URLSearchParams({
+      scope: exportScope,
+      includeNotebooks: String(includeNotebooks),
+    });
+    if (exportScope === 'phase') {
+      params.set('phase', String(exportPhase));
+    } else if (exportScope === 'week') {
+      params.set('week', String(exportWeek));
+    }
+    return params.toString();
+  };
+
+  const handleExportPdf = async () => {
+    if (!isAdmin || exportBusy) return;
+    setExportBusy('pdf');
+    setExportFeedback(null);
+    try {
+      const res = await fetch(`/api/export/bundle?${buildExportQuery()}`);
+      if (!res.ok) {
+        const errBody = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errBody?.error || 'Falha ao montar o livro para PDF.');
+      }
+      const bundle = (await res.json()) as ExportBundlePayload;
+      setPdfBundle(bundle);
+      setExportFeedback(
+        `Pré-visualização pronta (${bundle.weeksRange}). Use "Salvar como PDF" na janela de impressão.`,
+      );
+    } catch (err) {
+      setExportFeedback(err instanceof Error ? err.message : 'Erro ao gerar PDF.');
+    } finally {
+      setExportBusy(null);
+    }
+  };
+
+  const handleExportEpub = async () => {
+    if (!isAdmin || exportBusy) return;
+    setExportBusy('epub');
+    setExportFeedback(null);
+    try {
+      const res = await fetch(`/api/export/epub?${buildExportQuery()}`);
+      if (!res.ok) {
+        const errBody = (await res.json().catch(() => null)) as { error?: string } | null;
+        throw new Error(errBody?.error || 'Falha ao gerar eBook EPUB.');
+      }
+      const blob = await res.blob();
+      const disposition = res.headers.get('Content-Disposition') || '';
+      const match = disposition.match(/filename="([^"]+)"/);
+      const filename = match?.[1] || `applied-ai-architecture-${exportScope}.epub`;
+
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+
+      setExportFeedback(`eBook ${filename} baixado com sucesso.`);
+    } catch (err) {
+      setExportFeedback(err instanceof Error ? err.message : 'Erro ao gerar EPUB.');
+    } finally {
+      setExportBusy(null);
     }
   };
 
@@ -379,6 +470,151 @@ FIREBASE_CONFIG_JSON={"projectId":"...","appId":"...","apiKey":"...","authDomain
             </div>
           </div>
 
+          {/* Admin Editorial Export Card (PDF & eBook) */}
+          <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+              <div>
+                <h2 className="text-base font-semibold text-[#0F172A]">
+                  Exportação de Material Editorial (PDF &amp; eBook)
+                </h2>
+                <p className="text-xs text-slate-600 mt-1">
+                  Gere livros e apostilas em PDF ou eBook (.epub) com capa, sumário, leituras de conceito e apêndice opcional de gabaritos.
+                </p>
+              </div>
+              <div className="flex items-center gap-1 p-1 bg-slate-100 border border-slate-200 rounded-lg self-start shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setExportScope('week')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
+                    exportScope === 'week'
+                      ? 'bg-white text-[#0F172A] shadow-sm'
+                      : 'text-slate-600 hover:text-[#0F172A]'
+                  }`}
+                >
+                  Por Semana
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExportScope('phase')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
+                    exportScope === 'phase'
+                      ? 'bg-white text-[#0F172A] shadow-sm'
+                      : 'text-slate-600 hover:text-[#0F172A]'
+                  }`}
+                >
+                  Por Fase
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExportScope('full')}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap cursor-pointer ${
+                    exportScope === 'full'
+                      ? 'bg-white text-[#0F172A] shadow-sm'
+                      : 'text-slate-600 hover:text-[#0F172A]'
+                  }`}
+                >
+                  Completo (32 semanas)
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+              <div>
+                {exportScope === 'week' && (
+                  <label className="block space-y-1.5">
+                    <span className="text-xs font-medium text-slate-700">Selecionar Semana</span>
+                    <select
+                      value={exportWeek}
+                      onChange={(e) => setExportWeek(Number(e.target.value))}
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#14213D]/20 focus:border-[#14213D]"
+                    >
+                      {weeks.map((w) => (
+                        <option key={w.week} value={w.week}>
+                          Semana {String(w.week).padStart(2, '0')} — {w.title} (Fase {w.phase})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+
+                {exportScope === 'phase' && (
+                  <label className="block space-y-1.5">
+                    <span className="text-xs font-medium text-slate-700">Selecionar Fase</span>
+                    <select
+                      value={exportPhase}
+                      onChange={(e) => setExportPhase(Number(e.target.value))}
+                      className="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg text-[#0F172A] focus:outline-none focus:ring-2 focus:ring-[#14213D]/20 focus:border-[#14213D]"
+                    >
+                      {phases.map((p) => (
+                        <option key={p.id} value={p.id}>
+                          Fase {p.id} — {p.title} ({p.weeksRange})
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+
+                {exportScope === 'full' && (
+                  <div className="px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-700">
+                    <span className="font-semibold text-[#0F172A]">Edição Completa:</span>{' '}
+                    Todas as {phases.length} fases · {weeks.length} semanas integradas em um único volume.
+                  </div>
+                )}
+              </div>
+
+              <label className="flex items-start gap-2.5 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={includeNotebooks}
+                  onChange={(e) => setIncludeNotebooks(e.target.checked)}
+                  className="mt-0.5 rounded border-slate-300 text-[#14213D] focus:ring-[#14213D]"
+                />
+                <span className="text-xs text-slate-700 leading-relaxed">
+                  <strong className="text-[#0F172A]">Incluir Apêndice de Notebooks &amp; Gabaritos</strong>
+                  <span className="block text-slate-500">
+                    Adiciona o código resolvido e os testes práticos de entrevista (Live Coding) ao final.
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  disabled={exportBusy !== null}
+                  onClick={() => void handleExportPdf()}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-[#14213D] text-white hover:bg-[#1E3158] rounded-lg cursor-pointer disabled:opacity-50"
+                >
+                  {exportBusy === 'pdf' ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <FileText className="w-3.5 h-3.5" />
+                  )}
+                  <span>{exportBusy === 'pdf' ? 'Preparando PDF...' : 'Exportar PDF'}</span>
+                </button>
+
+                <button
+                  type="button"
+                  disabled={exportBusy !== null}
+                  onClick={() => void handleExportEpub()}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold bg-white text-[#14213D] border border-slate-300 hover:bg-slate-50 rounded-lg cursor-pointer disabled:opacity-50"
+                >
+                  {exportBusy === 'epub' ? (
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <BookOpen className="w-3.5 h-3.5" />
+                  )}
+                  <span>{exportBusy === 'epub' ? 'Gerando eBook...' : 'Exportar eBook (.epub)'}</span>
+                </button>
+              </div>
+
+              {exportFeedback && (
+                <span className="text-xs text-slate-600">{exportFeedback}</span>
+              )}
+            </div>
+          </div>
+
           {actionFeedback && (
             <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-700">
               {actionFeedback}
@@ -496,6 +732,10 @@ FIREBASE_CONFIG_JSON={"projectId":"...","appId":"...","apiKey":"...","authDomain
             )}
           </div>
         </div>
+      )}
+
+      {pdfBundle && (
+        <PdfBookPreview bundle={pdfBundle} onClose={() => setPdfBundle(null)} />
       )}
     </div>
   );

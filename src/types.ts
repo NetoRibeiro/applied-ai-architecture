@@ -109,3 +109,27 @@ export interface AccessConfig {
   updatedAt?: unknown;
 }
 
+export type ExportScope = 'week' | 'phase' | 'full';
+export type ExportFormat = 'pdf' | 'epub';
+
+export interface ExportChapter {
+  id: string;
+  title: string;
+  kind: 'intro' | 'reading' | 'appendix-divider' | 'gabarito';
+  week?: number;
+  phase?: number;
+  html: string;
+}
+
+export interface ExportBundlePayload {
+  scope: ExportScope;
+  title: string;
+  subtitle: string;
+  scopeLabel: string;
+  weeksRange: string;
+  author: string;
+  activeWeeks: number[];
+  includeNotebooks: boolean;
+  generatedAt: string;
+  chapters: ExportChapter[];
+}

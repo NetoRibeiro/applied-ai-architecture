@@ -2,8 +2,14 @@ import express from 'express';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import {
+  buildEpubBuffer,
+  buildExportBundle,
+  buildExportFilename,
+} from './export-builder.js';
 import type {
   EnvironmentType,
+  ExportScope,
   NotebookCell,
   PhaseInfo,
   SearchHit,
@@ -386,6 +392,86 @@ async function startServer() {
 
     hits.sort((a, b) => b.matchCount - a.matchCount || a.week - b.week);
     res.json({ hits: hits.slice(0, 12) });
+  });
+
+  function parseExportParams(query: Record<string, unknown>): {
+    scope: ExportScope;
+    phase: number;
+    week: number;
+    includeNotebooks: boolean;
+  } | { error: string } {
+    const rawScope = String(query.scope ?? 'full').trim();
+    if (rawScope !== 'week' && rawScope !== 'phase' && rawScope !== 'full') {
+      return { error: 'Escopo inválido. Use week, phase ou full.' };
+    }
+    const phase = Number.parseInt(String(query.phase ?? '1'), 10);
+    if (rawScope === 'phase' && (!Number.isInteger(phase) || phase < 1 || phase > 7)) {
+      return { error: 'Fase inválida. Escolha entre 1 e 7.' };
+    }
+    const week = Number.parseInt(String(query.week ?? '1'), 10);
+    if (rawScope === 'week' && (!Number.isInteger(week) || week < 1 || week > 32)) {
+      return { error: 'Semana inválida. Escolha entre 1 e 32.' };
+    }
+    const includeNotebooks = String(query.includeNotebooks ?? 'true') !== 'false';
+    return {
+      scope: rawScope,
+      phase: Number.isInteger(phase) ? phase : 1,
+      week: Number.isInteger(week) ? week : 1,
+      includeNotebooks,
+    };
+  }
+
+  app.get('/api/export/bundle', async (req, res) => {
+    const parsed = parseExportParams(req.query as Record<string, unknown>);
+    if ('error' in parsed) {
+      res.status(400).json({ error: parsed.error });
+      return;
+    }
+
+    try {
+      const bundle = await buildExportBundle(
+        ROOT_DIR,
+        PHASES,
+        WEEKS_META,
+        parseNotebook,
+        parsed,
+      );
+      res.json(bundle);
+    } catch (error) {
+      console.error('Failed building export bundle:', error);
+      res.status(500).json({ error: 'Não foi possível gerar o conteúdo para exportação.' });
+    }
+  });
+
+  app.get('/api/export/epub', async (req, res) => {
+    const parsed = parseExportParams(req.query as Record<string, unknown>);
+    if ('error' in parsed) {
+      res.status(400).json({ error: parsed.error });
+      return;
+    }
+
+    try {
+      const bundle = await buildExportBundle(
+        ROOT_DIR,
+        PHASES,
+        WEEKS_META,
+        parseNotebook,
+        parsed,
+      );
+      const epubBuffer = await buildEpubBuffer(bundle);
+      const filename = buildExportFilename(
+        parsed.scope,
+        'epub',
+        parsed.phase,
+        parsed.week,
+      );
+      res.setHeader('Content-Type', 'application/epub+zip');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(epubBuffer);
+    } catch (error) {
+      console.error('Failed generating EPUB export:', error);
+      res.status(500).json({ error: 'Não foi possível gerar o arquivo EPUB.' });
+    }
   });
 
   const isProd = process.env.NODE_ENV === 'production';
